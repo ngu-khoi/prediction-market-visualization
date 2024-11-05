@@ -1,4 +1,4 @@
-
 .env
 venv/
 kalshi-key.key
+.DS_Store
