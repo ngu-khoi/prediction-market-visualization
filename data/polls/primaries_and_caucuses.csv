@@ -1,0 +1,14 @@
+event,date,candidate,vote_fraction
+Iowa Republican Caucus,20240115,Donald Trump,0.51
+Iowa Republican Caucus,20240115,Ron DeSantis,0.212
+Iowa Republican Caucus,20240115,Nikki Haley,0.191
+New Hampshire Repbulican Primary,20240123,Donald Trump,0.543
+New Hampshire Repbulican Primary,20240123,Nikki Haley,0.432
+New Hampshire Repbulican Primary,20240123,Ron DesSantis,0.007
+New Hampshire Repbulican Primary,20240123,Chris Christie,0.005
+New Hampshire Repbulican Primary,20240123,Vivek Ramaswamy,0.003
+New Hampshire Repbulican Primary,20240123,Mike Pence,0.001
+New Hampshire Democrat Primary,20240123,Joe Biden,0.639
+New Hampshire Democrat Primary,20240123,Dean Phillips,0.196
+New Hampshire Democrat Primary,20240123,other writeins,0.083
+New Hampshire Democrat Primary,20240123,Derek Nadeau,0.04
