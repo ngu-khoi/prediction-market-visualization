@@ -1,0 +1,45 @@
+#chart-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+.candlestick {
+  stroke-width: 1px;
+}
+
+.candlestick.up {
+  fill: #26a69a;
+  stroke: #26a69a;
+}
+
+.candlestick.down {
+  fill: #ef5350;
+  stroke: #ef5350;
+}
+
+.axis line, .axis path {
+  stroke: #ccc;
+}
+
+.axis text {
+  fill: #666;
+}
+
+.tooltip {
+  position: absolute;
+  padding: 8px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.vertical-line {
+  pointer-events: none;
+}
