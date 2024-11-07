@@ -103,6 +103,3 @@ async function loadPolls() {
 		.append("title")
 		.text((d) => `${d.pollster}: ${d.candidate} ${d.pct}%`)
 }
-
-// Call the function when the page loads
-document.addEventListener("DOMContentLoaded", loadPolls)
