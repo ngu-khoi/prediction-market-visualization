@@ -1,27 +1,86 @@
 async function loadPolymarketData() {
 	try {
-		// Load Polymarket data
-		const data = await d3.csv(
+		// Load both datasets
+		const dailyData = await d3.csv(
 			"../../data/polymarket/polymarket-price-data-daily.csv"
 		)
+		const hourlyData = await d3.csv(
+			"../../data/polymarket/polymarket-price-data-hourly.csv"
+		)
 
-		// Parse the date using the correct format
 		const parseDate = d3.timeParse("%m-%d-%Y %H:%M")
 
-		// Process data for all candidates
-		const processData = (data, candidate) => {
-			return data
-				.map((d) => {
-					const timestamp = parseDate(d["Date (UTC)"])
-					const price_close = +d[candidate] * 100 // Convert to percentage
-					return { timestamp, price_close }
+		const processData = (dailyData, hourlyData, candidate) => {
+			// Process both datasets
+			const processedDaily = dailyData
+				.map((d) => ({
+					timestamp: parseDate(d["Date (UTC)"]),
+					price_close: +d[candidate] * 100,
+				}))
+				.filter(
+					(d) =>
+						d.timestamp &&
+						!isNaN(d.price_close) &&
+						d.price_close > 0
+				)
+
+			const processedHourly = hourlyData
+				.map((d) => ({
+					timestamp: parseDate(d["Date (UTC)"]),
+					price_close: +d[candidate] * 100,
+				}))
+				.filter(
+					(d) =>
+						d.timestamp &&
+						!isNaN(d.price_close) &&
+						d.price_close > 0
+				)
+
+			// Debug log the last few points
+			console.log(
+				`Last few ${candidate} daily points:`,
+				processedDaily.slice(-3)
+			)
+			console.log(
+				`Last few ${candidate} hourly points:`,
+				processedHourly.slice(-3)
+			)
+
+			// Combine datasets and sort by timestamp
+			const combined = [...processedDaily, ...processedHourly]
+				.sort((a, b) => a.timestamp - b.timestamp)
+				// Remove duplicates (prefer hourly if timestamp matches)
+				.filter((item, index, array) => {
+					if (index === 0) return true
+					return (
+						item.timestamp.getTime() !==
+						array[index - 1].timestamp.getTime()
+					)
 				})
-				.filter((d) => d.timestamp && !isNaN(d.price_close))
+
+			console.log(
+				`Last few ${candidate} combined points:`,
+				combined.slice(-3)
+			)
+
+			return combined
 		}
 
-		const processedTrumpData = processData(data, "Donald Trump")
-		const processedKamalaData = processData(data, "Kamala Harris")
-		const processedBidenData = processData(data, "Joe Biden") // Added Biden
+		const processedTrumpData = processData(
+			dailyData,
+			hourlyData,
+			"Donald Trump"
+		)
+		const processedKamalaData = processData(
+			dailyData,
+			hourlyData,
+			"Kamala Harris"
+		)
+		const processedBidenData = processData(
+			dailyData,
+			hourlyData,
+			"Joe Biden"
+		)
 
 		// Render the graph
 		renderPolymarketGraph({
@@ -30,7 +89,6 @@ async function loadPolymarketData() {
 			processedBidenData,
 		})
 
-		// Return the processed data
 		return { processedTrumpData, processedKamalaData, processedBidenData }
 	} catch (error) {
 		console.error("Error loading Polymarket data:", error)
@@ -227,7 +285,7 @@ function renderPolymarketGraph({
 		.style("pointer-events", "all")
 		.on("mousemove", (event) => {
 			const mouseX = d3.pointer(event)[0]
-			const x0 = x.invert(mouseX + margin.left) // Add margin.left here
+			const x0 = x.invert(mouseX + margin.left)
 
 			const trumpPoint =
 				processedTrumpData[bisect(processedTrumpData, x0, 1)]
@@ -244,22 +302,25 @@ function renderPolymarketGraph({
 					.attr("y1", 0)
 					.attr("y2", height)
 
+				const date = d3.timeFormat("%B %d, %Y")(x0)
+
 				tooltip.transition().duration(50).style("opacity", 0.9)
 
 				tooltip
 					.html(
 						`
-                      <div style="color: red">Trump: $${
+                        <div style="font-weight: bold; margin-bottom: 5px">${date}</div>
+                        <div style="color: red">Trump: $${
 							(trumpPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
 						}</div>
-                      <div style="color: purple">Biden: $${
+                        <div style="color: purple">Biden: $${
 							(bidenPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
 						}</div>
-                      <div style="color: blue">Harris: $${
+                        <div style="color: blue">Harris: $${
 							(kamalaPoint?.price_close / 100)?.toFixed(2) ??
 							"N/A"
 						}</div>
-                  `
+                    `
 					)
 					.style("left", event.pageX + 15 + "px")
 					.style("top", event.pageY - 15 + "px")
