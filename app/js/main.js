@@ -1,25 +1,38 @@
 document.addEventListener("DOMContentLoaded", async () => {
 	try {
-		// Clear any existing charts
-		d3.select("#candlestick-chart").html("")
-		d3.select("#kalshi-chart").html("")
-		d3.select("#polymarket-chart").html("")
+		await loadVisualizations()
 
-		// Load polls data
-		await loadPolls()
-
-		// Load and render Kalshi data
-		const kalshiData = await loadKalshiData()
-		if (!kalshiData) {
-			console.error("Failed to load Kalshi data.")
-		}
-
-		// Load Polymarket data
-		const polymarketData = await loadPolymarketData()
-		if (!polymarketData) {
-			console.error("Failed to load Polymarket data.")
-		}
+		// Add resize handler
+		let resizeTimeout
+		window.addEventListener("resize", () => {
+			clearTimeout(resizeTimeout)
+			resizeTimeout = setTimeout(async () => {
+				// Clear existing charts
+				d3.selectAll(
+					"#candlestick-chart svg, #kalshi-chart svg, #polymarket-chart svg"
+				).remove()
+				// Reload visualizations
+				await loadVisualizations()
+			}, 250) // Debounce resize events
+		})
 	} catch (error) {
 		console.error("Error during initialization:", error)
 	}
 })
+
+async function loadVisualizations() {
+	// Load polls data
+	await loadPolls()
+
+	// Load and render Kalshi data
+	const kalshiData = await loadKalshiData()
+	if (!kalshiData) {
+		console.error("Failed to load Kalshi data.")
+	}
+
+	// Load Polymarket data
+	const polymarketData = await loadPolymarketData()
+	if (!polymarketData) {
+		console.error("Failed to load Polymarket data.")
+	}
+}

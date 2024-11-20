@@ -31,10 +31,15 @@ async function loadPolls() {
 		}))
 		.sort((a, b) => a.date - b.date)
 
-	// Update margins and dimensions to match other charts
+	// Get container dimensions
+	const container = d3.select("#candlestick-chart")
+	const containerWidth = container.node().getBoundingClientRect().width
+	const containerHeight = container.node().getBoundingClientRect().height
+
+	// Update margins and dimensions based on container
 	const margin = { top: 40, right: 30, bottom: 50, left: 60 }
-	const width = 1100 - margin.left - margin.right
-	const height = 600 - margin.top - margin.bottom
+	const width = containerWidth - margin.left - margin.right
+	const height = containerHeight - margin.top - margin.bottom
 
 	// Remove any existing chart
 	d3.select("#polls-chart").remove()
@@ -193,9 +198,17 @@ async function loadPolls() {
 			const mouseX = d3.pointer(event)[0]
 			const x0 = xScale.invert(mouseX + margin.left)
 
+			// Find the closest data points
 			const trumpPoint = trumpPolls[bisect(trumpPolls, x0, 1)]
 			const bidenPoint = bidenPolls[bisect(bidenPolls, x0, 1)]
-			const harrisPoint = harrisPolls[bisect(harrisPolls, x0, 1)]
+
+			// For Harris, check if we're after her first data point
+			const harrisStartDate =
+				harrisPolls.length > 0 ? harrisPolls[0].date : null
+			const harrisPoint =
+				harrisStartDate && x0 >= harrisStartDate
+					? harrisPolls[bisect(harrisPolls, x0, 1)]
+					: null
 
 			if (trumpPoint || bidenPoint || harrisPoint) {
 				verticalLine
@@ -205,15 +218,23 @@ async function loadPolls() {
 					.attr("y1", 0)
 					.attr("y2", height)
 
-				tooltip.transition().duration(50).style("opacity", 0.9)
+				const tooltipDate = d3.timeFormat("%B %d, %Y")(x0)
 
 				tooltip
+					.style("opacity", 0.9)
 					.html(
 						`
-					<div style="color: red">Trump: ${trumpPoint?.pct.toFixed(1) ?? "N/A"}%</div>
-					<div style="color: purple">Biden: ${bidenPoint?.pct.toFixed(1) ?? "N/A"}%</div>
-					<div style="color: blue">Harris: ${harrisPoint?.pct.toFixed(1) ?? "N/A"}%</div>
-				`
+                        <div style="font-weight: bold; margin-bottom: 5px">${tooltipDate}</div>
+                        <div style="color: red">Trump: ${
+							trumpPoint?.pct.toFixed(1) ?? "N/A"
+						}%</div>
+                        <div style="color: purple">Biden: ${
+							bidenPoint?.pct.toFixed(1) ?? "N/A"
+						}%</div>
+                        <div style="color: blue">Harris: ${
+							harrisPoint?.pct.toFixed(1) ?? "N/A"
+						}%</div>
+                    `
 					)
 					.style("left", event.pageX + 15 + "px")
 					.style("top", event.pageY - 15 + "px")
@@ -221,7 +242,7 @@ async function loadPolls() {
 		})
 		.on("mouseout", () => {
 			verticalLine.style("opacity", 0)
-			tooltip.transition().duration(200).style("opacity", 0)
+			tooltip.style("opacity", 0)
 		})
 
 	// Update legend with new colors

@@ -2,162 +2,128 @@
 <html>
 <head>
     <title>2024 Presidential Election Analysis</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Import D3 and Scrollama correctly -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/intersection-observer@0.12.0/intersection-observer.js"></script>
+    <script src="https://unpkg.com/scrollama@3.2.1/build/scrollama.min.js"></script>
 </head>
 <body>
-    <!-- Authors -->
-    <div class="authors">
-        <h4>By Matt Mansour, Brett Kim, Raunak Daga, and Khoi Nguyen</h4>
+    <!-- Progress indicator -->
+    <div id="scroll-progress">
+        <div class="progress-step" data-step="intro">Introduction</div>
+        <div class="progress-step" data-step="section1">Section 1</div>
+        <div class="progress-step" data-step="section2">Section 2</div>
+        <div class="progress-step" data-step="section3">Section 3</div>
+        <div class="progress-step" data-step="section4">Section 4</div>
+        <div class="progress-step" data-step="section5">Section 5</div>
+        <div class="progress-step" data-step="section6">Section 6</div>
+        <div class="progress-step" data-step="section7">Section 7</div>
+        <div class="progress-step" data-step="section8">Section 8</div>
+        <div class="progress-step" data-step="final">Data</div>
     </div>
 
-    <!-- Visualization Container -->
-    <div class="visualizations-container">
-        <!-- Polling Chart -->
-        <div id="chart-container" class="visualization-section">
-            <h2>2024 Presidential Election Polling</h2>
-            <p class="caption">National polling averages showing the transition from Biden to Harris against Trump</p>
-            <div id="candlestick-chart"></div>
+    <!-- Main Content -->
+    <main>
+        <!-- Placeholder sections -->
+        <section class="step" data-step="intro">
+          <div class="step-content">
+              <h1>2024 Presidential Election Analysis</h1>
+              <div class="authors">
+                  <h4>By Matt Mansour, Brett Kim, Raunak Daga, and Khoi Nguyen</h4>
+                  <p class="author-info">Data Journalism @ Stanford University</p>
+              </div>
+              <p>Introduction text here...</p>
+          </div>
+      </section>
+
+      <!-- Add these sections after the intro section -->
+      <section class="step" data-step="section1">
+        <div class="step-content">
+            <h2>Section 1</h2>
+            <p>Content for section 1...</p>
         </div>
+      </section>
 
-        <!-- Kalshi Chart -->
-        <div id="kalshi-container" class="visualization-section">
-            <h2>Kalshi Prediction Markets</h2>
-            <p class="caption">Kalshi market prices over time</p>
-            <div id="kalshi-chart"></div>
+      <section class="step" data-step="section2">
+        <div class="step-content">
+            <h2>Section 2</h2>
+            <p>Content for section 2...</p>
         </div>
+      </section>
 
-        <!-- Polymarket Chart -->
-        <div id="polymarket-container" class="visualization-section">
-            <h2>Polymarket Prediction Markets</h2>
-            <p class="caption">Polymarket prices over time</p>
-            <div id="polymarket-chart"></div>
+      <section class="step" data-step="section3">
+        <div class="step-content">
+            <h2>Section 3</h2>
+            <p>Content for section 3...</p>
         </div>
-    </div>
+      </section>
 
-    <!-- Rest of the data story -->
-    <div id="data-story">
-        <section>
-            <h3>Introduction</h3>
-            <p>Placeholder: Introduction to the prediction markets and their legalization through Polymarket. Kalshi became legal to operate in the United States in 2023.</p>
-            <p class="caption">Caption: Overview of prediction markets and their role in elections.</p>
-        </section>
-        
-        <!-- Candidates and Electoral Map Section -->
-        <section id="candidates-and-map">
-            <h3>2024 Presidential Race Evolution</h3>
-            <div id="candidates-overview">
-                <div class="candidate republican">
-                    <h4>Donald Trump</h4>
-                    <p>Republican Nominee</p>
-                    <p>Former President seeking second term</p>
-                    <p>Maintained consistent polling lead through transitions</p>
-                </div>
-                
-                <div class="candidate democrat">
-                    <h4>Joe Biden</h4>
-                    <p>Former Democratic Nominee (Withdrew)</p>
-                    <p>Incumbent President who withdrew in July 2024</p>
-                    <p>Led Democratic ticket until withdrawal</p>
-                </div>
-                
-                <div class="candidate democrat">
-                    <h4>Kamala Harris</h4>
-                    <p>Current Democratic Nominee</p>
-                    <p>Vice President who assumed nomination</p>
-                    <p>Leading Democratic candidate post-Biden</p>
-                </div>
-            </div>
+      <section class="step" data-step="section4">
+        <div class="step-content">
+            <h2>Section 4</h2>
+            <p>Content for section 4...</p>
+        </div>
+      </section>
 
-            <div id="electoral-map">
-                <h4>Electoral College Projection</h4>
-                <p>Tracking changes in projections through Biden withdrawal and Harris nomination</p>
-                <!-- Interactive electoral college map visualization -->
-                <div id="map-visualization">
-                    <!-- Map will be rendered here -->
-                </div>
-                <div class="map-legend">
-                    <p>Current Electoral Vote Count:</p>
-                    <ul>
-                        <li>Trump (R): XXX</li>
-                        <li>Harris (D): XXX</li>
-                        <li>Toss-up: XXX</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Key Events Section with Subsections -->
-        <section id="key-events">
-            <h3>Key Events Timeline</h3>
-            <p>As you scroll, observe how major events impacted both polling data and prediction markets.</p>
-            
-            <!-- Scrolling visualization container -->
-            <div id="events-visualization">
-                <div class="event-item">
-                    <h4>Biden Drops Out - July 2024</h4>
-                    <p>Impact on polls and markets</p>
-                    <!-- Visualization for this event -->
-                </div>
-                
-                <div class="event-item">
-                    <h4>First Assassination Attempt - Date</h4>
-                    <p>Market reaction and polling shifts</p>
-                    <!-- Visualization for this event -->
-                </div>
-                
-                <div class="event-item">
-                    <h4>Second Assassination Attempt - Date</h4>
-                    <p>Further market and polling changes</p>
-                    <!-- Visualization for this event -->
-                </div>
+      <section class="step" data-step="section5">
+        <div class="step-content">
+            <h2>Section 5</h2>
+            <p>Content for section 5...</p>
+        </div>
+      </section>
 
-                <div class="event-item">
-                    <h4>Musk Endorses Prediction Markets - Date</h4>
-                    <p>Surge in trading volume and market attention</p>
-                    <!-- Visualization for this event -->
-                </div>
-                
-                <!-- Additional events can be added here -->
-            </div>
-            
-            <!-- Polling comparison for each event -->
-            <div id="polling-comparison">
-                <p>Polling data vs. Prediction market prices during each event</p>
-                <!-- Dynamic visualization showing changes -->
-            </div>
-        </section>
-        
-        <!-- Arbitrage Section -->
-        <section id="arbitrage">
-            <h3>Arbitrage Opportunities</h3>
-            <p>Understanding how traders could profit from price differences between Kalshi and Polymarket.</p>
-            
-            <div class="arbitrage-explanation">
-                <h4>What is Arbitrage?</h4>
-                <p>Explanation of how arbitrage works between prediction markets</p>
-            </div>
-            
-            <div class="arbitrage-calculator">
-                <h4>Profit Calculator</h4>
-                <p>Interactive tool to calculate potential profits:</p>
-                <!-- Interactive calculator component -->
-            </div>
-            
-            <div class="arbitrage-examples">
-                <h4>Historical Examples</h4>
-                <p>Notable arbitrage opportunities during the election cycle</p>
-                <!-- Examples visualization -->
-            </div>
-        </section>
-        
-		<section>
-			<h3>Conclusion</h3>
-			<p>Placeholder: Summary of findings and implications for future elections.</p>
-			<p class="caption">Caption: Final thoughts on the role of prediction markets in elections.</p>
-        </section>
-    </div>
-    
+      <section class="step" data-step="section6">
+        <div class="step-content">
+            <h2>Section 6</h2>
+            <p>Content for section 6...</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="section7">
+        <div class="step-content">
+            <h2>Section 7</h2>
+            <p>Content for section 7...</p>
+        </div>
+      </section>
+
+      <section class="step" data-step="section8">
+        <div class="step-content">
+            <h2>Section 8</h2>
+            <p>Content for section 8...</p>
+        </div>
+      </section>
+
+        <!-- Your existing visualizations section -->
+      <section class="step" data-step="final">
+          <div class="step-content">
+              <h1>Data Charts</h1>
+              <div class="visualizations-container">
+                  <!-- Polling Chart -->
+                  <div id="chart-container" class="visualization-section">
+                      <h2>2024 Presidential Election Polling</h2>
+                      <p class="caption">National polling averages showing the transition from Biden to Harris against Trump</p>
+                      <div id="candlestick-chart"></div>
+                  </div>
+
+                  <!-- Kalshi Chart -->
+                  <div id="kalshi-container" class="visualization-section">
+                      <h2>Kalshi Prediction Markets</h2>
+                      <p class="caption">Kalshi market prices over time</p>
+                      <div id="kalshi-chart"></div>
+                  </div>
+
+                  <!-- Polymarket Chart -->
+                  <div id="polymarket-container" class="visualization-section">
+                      <h2>Polymarket Prediction Markets</h2>
+                      <p class="caption">Polymarket prices over time</p>
+                      <div id="polymarket-chart"></div>
+                  </div>
+              </div>
+          </div>
+      </section>
+    </main>
+
     <script src="js/polls_loader.js"></script>
     <script src="js/polymarket_loader.js"></script>
     <script src="js/kalshi_loader.js"></script>

@@ -1,5 +1,96 @@
-.visualizations-container {
+/* Base Styles */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Layout */
+main {
+  position: relative;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-right: 200px; /* Space for progress indicator */
+}
+
+/* Typography */
+h2 {
+  margin: 0;
+  padding: 10px 0;
+  color: #333;
+}
+
+.caption {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* Scrollama Sections */
+.step {
+  position: relative;
+  min-height: fit-content;
+  padding: 20vh 0;
+  border: 1px solid red; /* Temporary - to see sections */
+}
+
+.step-content {
+  position: sticky;
+  top: 50vh;
+  transform: translateY(-50%);
+  background: white;
+  padding: 2rem;
+  margin: 0 auto;
   width: 90%;
+  max-width: 1000px;
+  z-index: 1;
+}
+
+/* Progress Indicator */
+#scroll-progress {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.progress-step {
+  padding: 10px 20px;
+  margin: 5px 0;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.progress-step.active {
+  background: #007bff;
+  color: white;
+}
+
+/* Visualization Section Styles */
+.step[data-step="final"] {
+  padding: 10vh 0;
+}
+
+.step[data-step="final"] .step-content {
+  pointer-events: all;
+  transform: none;  /* Remove transform to contain visualizations */
+  top: 0;          /* Reset sticky positioning */
+  position: relative;
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+}
+
+.visualizations-container {
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -9,10 +100,11 @@
 .visualization-section {
   width: 100%;
   padding: 20px;
-  background: #fff;
+  background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  pointer-events: all;
 }
 
 #candlestick-chart,
@@ -23,20 +115,13 @@
   margin: 20px 0;
 }
 
-.caption {
-  color: #666;
-  font-style: italic;
-  text-align: center;
-  margin: 10px 0;
+.visualization-section svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-h2 {
-  margin: 0;
-  padding: 10px 0;
-  color: #333;
-}
-
-/* Existing styles for lines and points */
+/* Chart Elements */
 .dem-line {
   stroke: blue;
   stroke-width: 2;
@@ -47,95 +132,52 @@ h2 {
   stroke-width: 2;
 }
 
+.line {
+  fill: none;
+  stroke-width: 2;
+}
+
 .dem-point:hover, 
 .rep-point:hover {
   r: 5;
   cursor: pointer;
 }
 
-/* Ensure proper spacing between sections */
-#data-story {
-  margin-top: 40px;
-}
-
+/* Axes and Grid */
 .x-axis path,
-.y-axis path {
-    stroke: black;
-    stroke-width: 1px;
-}
-
+.y-axis path,
 .x-axis line,
 .y-axis line {
-    stroke: black;
-    stroke-width: 0.5px;
+  stroke: #000;
+  stroke-width: 1px;
 }
 
 .x-axis text,
 .y-axis text {
-    font-size: 12px;
-    font-family: Arial;
+  font-size: 12px;
+  font-family: Arial;
 }
 
 .grid line {
-    stroke: lightgrey;
-    stroke-opacity: 0.7;
-    shape-rendering: crispEdges;
+  stroke: #ddd;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
 }
 
 .grid path {
-    stroke-width: 0;
+  stroke-width: 0;
 }
 
+/* Tooltip */
 .tooltip {
-    position: absolute;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    pointer-events: none;
-    font-size: 12px;
-}
-
-/* Chart containers */
-.visualization-section {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 20px;
-    margin-bottom: 30px;
-}
-
-/* Axes and grid styling */
-.x-axis path, .y-axis path,
-.x-axis line, .y-axis line {
-    stroke: #000;
-    stroke-width: 1px;
-}
-
-.grid line {
-    stroke: #ddd;
-    stroke-opacity: 0.7;
-}
-
-/* Lines styling */
-.line {
-    fill: none;
-    stroke-width: 2;
-}
-
-/* Tooltip styling */
-.tooltip {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    pointer-events: none;
-    font-size: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.tooltip {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  pointer-events: none;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   max-width: 200px;
   white-space: nowrap;
 }

@@ -43,13 +43,18 @@ function renderPolymarketGraph({
 	processedKamalaData,
 	processedBidenData,
 }) {
-	const margin = { top: 40, right: 30, bottom: 50, left: 60 }
-	const width = 1100 - margin.left - margin.right
-	const height = 600 - margin.top - margin.bottom
+	// Get container dimensions
+	const container = d3.select("#polymarket-chart")
+	const containerWidth = container.node().getBoundingClientRect().width
+	const containerHeight = container.node().getBoundingClientRect().height
 
-	// Create the SVG container
+	const margin = { top: 40, right: 30, bottom: 50, left: 60 }
+	const width = containerWidth - margin.left - margin.right
+	const height = containerHeight - margin.top - margin.bottom
+
+	// Create the SVG container with dynamic size
 	const svg = d3
-		.select("#candlestick-chart")
+		.select("#polymarket-chart")
 		.append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
