@@ -11,7 +11,31 @@
         <h4>By Matt Mansour, Brett Kim, Raunak Daga, and Khoi Nguyen</h4>
     </div>
 
-    <!-- Data Story Section -->
+    <!-- Visualization Container -->
+    <div class="visualizations-container">
+        <!-- Polling Chart -->
+        <div id="chart-container" class="visualization-section">
+            <h2>2024 Presidential Election Polling</h2>
+            <p class="caption">National polling averages showing the transition from Biden to Harris against Trump</p>
+            <div id="candlestick-chart"></div>
+        </div>
+
+        <!-- Kalshi Chart -->
+        <div id="kalshi-container" class="visualization-section">
+            <h2>Kalshi Prediction Markets</h2>
+            <p class="caption">Kalshi market prices over time</p>
+            <div id="kalshi-chart"></div>
+        </div>
+
+        <!-- Polymarket Chart -->
+        <div id="polymarket-container" class="visualization-section">
+            <h2>Polymarket Prediction Markets</h2>
+            <p class="caption">Polymarket prices over time</p>
+            <div id="polymarket-chart"></div>
+        </div>
+    </div>
+
+    <!-- Rest of the data story -->
     <div id="data-story">
         <section>
             <h3>Introduction</h3>
@@ -127,46 +151,16 @@
             </div>
         </section>
         
-        <!-- Interactive Data Section -->
-        <section id="data-exploration">
-            <h3>Interactive Data Analysis</h3>
-            <p>Explore the complete dataset of polls and prediction markets.</p>
-            
-            <div id="graph-controls">
-                <!-- Controls for interactive graphs -->
-            </div>
-            
-            <div id="graph-display">
-                <!-- Main visualization area -->
-            </div>
-            
-            <div class="graph-options">
-                <ul>
-                    <li>Price Movement Over Time</li>
-                    <li>Volume Analysis</li>
-                    <li>Correlation Studies</li>
-                    <li>Event Impact Analysis</li>
-                </ul>
-            </div>
-        </section>
-        
-        <section>
-            <h3>Conclusion</h3>
-            <p>Placeholder: Summary of findings and implications for future elections.</p>
-            <p class="caption">Caption: Final thoughts on the role of prediction markets in elections.</p>
+		<section>
+			<h3>Conclusion</h3>
+			<p>Placeholder: Summary of findings and implications for future elections.</p>
+			<p class="caption">Caption: Final thoughts on the role of prediction markets in elections.</p>
         </section>
     </div>
     
-    <!-- Chart Container -->
-    <div id="chart-container">
-        <h2>2024 Presidential Election Polling vs. Prediction Markets</h2>
-        <p class="caption">Caption: Overview of prediction markets and their role in elections.</p>
-        <div id="candlestick-chart"></div>
-    </div>
-    
+    <script src="js/polls_loader.js"></script>
     <script src="js/polymarket_loader.js"></script>
     <script src="js/kalshi_loader.js"></script>
-    <script src="js/polls_loader.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

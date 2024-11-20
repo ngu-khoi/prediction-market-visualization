@@ -1,23 +1,24 @@
 document.addEventListener("DOMContentLoaded", async () => {
 	try {
+		// Clear any existing charts
+		d3.select("#candlestick-chart").html("")
+		d3.select("#kalshi-chart").html("")
+		d3.select("#polymarket-chart").html("")
+
+		// Load polls data
+		await loadPolls()
+
 		// Load and render Kalshi data
 		const kalshiData = await loadKalshiData()
-		if (kalshiData) {
-			// Rendering is now handled within loadKalshiData
-		} else {
+		if (!kalshiData) {
 			console.error("Failed to load Kalshi data.")
 		}
 
 		// Load Polymarket data
 		const polymarketData = await loadPolymarketData()
-		if (polymarketData) {
-			renderGraph(polymarketData)
-		} else {
+		if (!polymarketData) {
 			console.error("Failed to load Polymarket data.")
 		}
-
-		// Load polls data
-		await loadPolls()
 	} catch (error) {
 		console.error("Error during initialization:", error)
 	}

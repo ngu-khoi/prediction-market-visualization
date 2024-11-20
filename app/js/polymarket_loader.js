@@ -2,7 +2,7 @@ async function loadPolymarketData() {
 	try {
 		// Load Polymarket data
 		const data = await d3.csv(
-			"../../data/polymarket/polymarket-price-data.csv"
+			"../../data/polymarket/polymarket-price-data-daily.csv"
 		)
 
 		// Parse the date using the correct format
