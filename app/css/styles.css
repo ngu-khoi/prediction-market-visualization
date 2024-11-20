@@ -58,23 +58,23 @@ h2 {
 /* Scrollama Section Styles */
 .step {
   position: relative;
-  min-height: fit-content;
-  padding: 20vh 0;
-  border: 1px solid red; /* Temporary - to see sections */
+  min-height: 100vh;
+  padding: 0;
+  border: 1px solid red;
 }
 
 .step-content {
-  position: sticky;
-  top: 50vh;
-  transform: translateY(-50%);
+  position: relative;
+  top: auto;
+  transform: none;
   background: white;
   padding: 2rem;
-  margin: 0 auto;
+  margin: 2rem auto;
   width: 90%;
   max-width: 1000px;
   z-index: 1;
-  overflow-y: auto;
-  max-height: 80vh;
+  overflow: visible;
+  max-height: none;
 }
 
 /* Key Events Section */
@@ -213,4 +213,33 @@ h2 {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   max-width: 200px;
   white-space: nowrap;
+}
+
+/* Add specific styles for debate aftermath section */
+[data-step="debate-aftermath"] {
+  min-height: 400vh;
+}
+
+[data-step="debate-aftermath"] .step-content {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  background: none;
+}
+
+/* Update the scroll container styles */
+.scroll-container {
+  position: relative;
+  display: flex;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+}
+
+.graph-container.sticky {
+  position: sticky;
+  top: 15vh;
+  align-self: flex-start;
+  height: 70vh;
 }

@@ -1,0 +1,12 @@
+#debate-aftermath {
+  width: 100%;
+  padding: 20px;
+}
+
+.chart-container {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 20px 0;
+}

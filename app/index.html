@@ -36,7 +36,14 @@
         <section class="step" data-step="intro">
             <div class="step-content">
                 <h2>Introduction</h2>
-                <p>Introduction text explaining the purpose and scope of this analysis...</p>
+                <p>In this data-driven analysis, we explore the dramatic developments of the 2024 presidential election race between President Joe Biden and former President Donald Trump. Through a combination of polling data and prediction market prices, we examine how key events - particularly the pivotal June 2024 debate - have shaped the electoral landscape.</p>
+                <p>Our analysis leverages data from multiple sources:</p>
+                <ul>
+                    <li>National polling averages from major polling organizations</li>
+                    <li>Prediction market prices from Polymarket and Kalshi</li>
+                    <li>Electoral college projections and state-by-state analysis</li>
+                </ul>
+                <p>By combining traditional polling with prediction market data, we aim to provide a comprehensive view of the election's trajectory and identify moments where public sentiment and market expectations diverged significantly.</p>
             </div>
         </section>
 
@@ -51,34 +58,11 @@
         </section>
 
         <!-- Key Events Section -->
-        <section class="step" data-step="key-events">
-            <div class="step-content">
-                <h2>Key Events Timeline</h2>
-                
-                <!-- Subsection: Biden Debate -->
-                <div class="subsection">
-                    <h3>Biden's Debate Performance</h3>
-                    <p>Analysis of Biden's debate performance and its impact on polling and prediction markets...</p>
-                </div>
-
-                <!-- Subsection: Biden Drops Out -->
-                <div class="subsection">
-                    <h3>Biden Withdraws from Race</h3>
-                    <p>Analysis of Biden's withdrawal and the transition to Harris...</p>
-                </div>
-
-                <!-- Subsection: First Trump Incident -->
-                <div class="subsection">
-                    <h3>First Trump Assassination Attempt</h3>
-                    <p>Analysis of market reactions to the first assassination attempt...</p>
-                </div>
-
-                <!-- Subsection: Second Trump Incident -->
-                <div class="subsection">
-                    <h3>Second Trump Assassination Attempt</h3>
-                    <p>Analysis of market reactions to the second assassination attempt...</p>
-                </div>
-            </div>
+        <section class="step" data-step="debate-aftermath">
+          <div id="debate-aftermath">
+              <h2>The Debate's Impact</h2>
+              <!-- The DebateAftermathViz will inject content here -->
+          </div>
         </section>
 
         <!-- Arbitrage Section -->
@@ -119,6 +103,8 @@
         </section>
     </main>
 
+    <!-- Add this before main.js -->
+    <script src="js/debate_aftermath.js"></script>
     <script src="js/polls_loader.js"></script>
     <script src="js/polymarket_loader.js"></script>
     <script src="js/kalshi_loader.js"></script>

@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 	try {
 		await loadVisualizations()
 
+		// Initialize debate aftermath visualization
+		const debateViz = new DebateAftermathViz()
+		await debateViz.initialize()
+
 		// Add resize handler
 		let resizeTimeout
 		window.addEventListener("resize", () => {
@@ -13,6 +17,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 				).remove()
 				// Reload visualizations
 				await loadVisualizations()
+
+				const newDebateViz = new DebateAftermathViz()
+				await newDebateViz.initialize()
 			}, 250) // Debounce resize events
 		})
 	} catch (error) {
