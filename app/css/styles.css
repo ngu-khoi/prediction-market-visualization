@@ -29,26 +29,6 @@ h2 {
   margin: 10px 0;
 }
 
-/* Scrollama Sections */
-.step {
-  position: relative;
-  min-height: fit-content;
-  padding: 20vh 0;
-  border: 1px solid red; /* Temporary - to see sections */
-}
-
-.step-content {
-  position: sticky;
-  top: 50vh;
-  transform: translateY(-50%);
-  background: white;
-  padding: 2rem;
-  margin: 0 auto;
-  width: 90%;
-  max-width: 1000px;
-  z-index: 1;
-}
-
 /* Progress Indicator */
 #scroll-progress {
   position: fixed;
@@ -75,6 +55,58 @@ h2 {
   color: white;
 }
 
+/* Scrollama Section Styles */
+.step {
+  position: relative;
+  min-height: fit-content;
+  padding: 20vh 0;
+  border: 1px solid red; /* Temporary - to see sections */
+}
+
+.step-content {
+  position: sticky;
+  top: 50vh;
+  transform: translateY(-50%);
+  background: white;
+  padding: 2rem;
+  margin: 0 auto;
+  width: 90%;
+  max-width: 1000px;
+  z-index: 1;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+/* Key Events Section */
+[data-step="key-events"] .step-content {
+  padding: 2rem;
+  transform: none;
+  position: relative;
+  top: 0;
+  margin: 10vh auto;
+}
+
+/* Subsection Styles */
+.subsection {
+  margin: 1rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.subsection h3 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.step-content > h2 + div {
+  margin-top: 2rem;
+}
+
 /* Visualization Section Styles */
 .step[data-step="final"] {
   padding: 10vh 0;
@@ -82,8 +114,8 @@ h2 {
 
 .step[data-step="final"] .step-content {
   pointer-events: all;
-  transform: none;  /* Remove transform to contain visualizations */
-  top: 0;          /* Reset sticky positioning */
+  transform: none;
+  top: 0;
   position: relative;
   padding-top: 5vh;
   padding-bottom: 5vh;
@@ -107,6 +139,7 @@ h2 {
   pointer-events: all;
 }
 
+/* Chart Styles */
 #candlestick-chart,
 #kalshi-chart,
 #polymarket-chart {
