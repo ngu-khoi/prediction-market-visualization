@@ -31,10 +31,10 @@ async function loadPolls() {
 		}))
 		.sort((a, b) => a.date - b.date)
 
-	// Create polls chart container
-	const margin = { top: 20, right: 100, bottom: 30, left: 40 }
-	const width = document.getElementById("candlestick-chart").offsetWidth
-	const height = 400
+	// Update margins and dimensions to match other charts
+	const margin = { top: 40, right: 30, bottom: 50, left: 60 }
+	const width = 1100 - margin.left - margin.right
+	const height = 600 - margin.top - margin.bottom
 
 	// Remove any existing chart
 	d3.select("#polls-chart").remove()
@@ -42,46 +42,97 @@ async function loadPolls() {
 	const svg = d3
 		.select("#candlestick-chart")
 		.append("svg")
-		.attr("width", width)
-		.attr("height", height)
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", `translate(${margin.left},${margin.top})`)
 
-	// Create scales
+	// Add title
+	svg.append("text")
+		.attr("x", width / 2)
+		.attr("y", -10)
+		.attr("text-anchor", "middle")
+		.style("font-size", "16px")
+		.style("text-decoration", "underline")
+		.text("Polling Data")
+
+	// Update scales
 	const xScale = d3
 		.scaleTime()
-		.domain(d3.extent(relevantPolls, (d) => d.date))
+		.domain([new Date("2024-01-01"), new Date("2024-11-08")])
 		.range([margin.left, width - margin.right])
 
-	const yScale = d3
-		.scaleLinear()
-		.domain([30, 60]) // Adjusted to focus on relevant range
-		.range([height - margin.bottom, margin.top])
+	const yScale = d3.scaleLinear().domain([30, 60]).range([height, 0])
 
-	// Add axes
+	// Update axes with new styling
 	svg.append("g")
-		.attr("transform", `translate(0,${height - margin.bottom})`)
-		.call(d3.axisBottom(xScale))
+		.attr("class", "x-axis")
+		.attr("transform", `translate(0,${height})`)
+		.call(
+			d3
+				.axisBottom(xScale)
+				.ticks(d3.timeWeek.every(1))
+				.tickFormat(d3.timeFormat("%b %d"))
+		)
+		.selectAll("text")
+		.style("text-anchor", "end")
+		.attr("dx", "-.8em")
+		.attr("dy", ".15em")
+		.attr("transform", "rotate(-45)")
 
 	svg.append("g")
+		.attr("class", "y-axis")
 		.attr("transform", `translate(${margin.left},0)`)
-		.call(d3.axisLeft(yScale))
+		.call(
+			d3
+				.axisLeft(yScale)
+				.ticks(10)
+				.tickFormat((d) => `${d}%`)
+		)
 
-	// Create line generator
+	// Add gridlines
+	svg.append("g")
+		.attr("class", "grid")
+		.attr("transform", `translate(${margin.left},0)`)
+		.call(
+			d3
+				.axisLeft(yScale)
+				.ticks(10)
+				.tickSize(-(width - margin.left - margin.right))
+				.tickFormat("")
+		)
+		.style("stroke-dasharray", "2,2")
+		.style("opacity", 0.1)
+
+	// Add prominent 50% line
+	svg.append("line")
+		.attr("class", "fifty-percent-line")
+		.attr("x1", margin.left)
+		.attr("x2", width)
+		.attr("y1", yScale(50))
+		.attr("y2", yScale(50))
+		.style("stroke", "#666")
+		.style("stroke-width", "1px")
+		.style("stroke-dasharray", "5,5")
+		.style("opacity", 0.8)
+
+	// Update line generator
 	const line = d3
 		.line()
 		.x((d) => xScale(d.date))
 		.y((d) => yScale(d.pct))
-		.curve(d3.curveMonotoneX) // Add smoothing
+		.curve(d3.curveMonotoneX)
 
 	// Split data by candidate
 	const bidenPolls = relevantPolls.filter((d) => d.candidate === "Biden")
 	const harrisPolls = relevantPolls.filter((d) => d.candidate === "Harris")
 	const trumpPolls = relevantPolls.filter((d) => d.candidate === "Trump")
 
-	// Draw lines for each candidate
+	// Draw lines with updated colors
 	if (trumpPolls.length > 0) {
 		svg.append("path")
 			.datum(trumpPolls)
-			.attr("class", "trump-line")
+			.attr("class", "line trump")
 			.attr("fill", "none")
 			.attr("stroke", "red")
 			.attr("stroke-width", 2)
@@ -91,9 +142,9 @@ async function loadPolls() {
 	if (bidenPolls.length > 0) {
 		svg.append("path")
 			.datum(bidenPolls)
-			.attr("class", "biden-line")
+			.attr("class", "line biden")
 			.attr("fill", "none")
-			.attr("stroke", "blue")
+			.attr("stroke", "purple") // Changed to purple
 			.attr("stroke-width", 2)
 			.attr("d", line)
 	}
@@ -101,71 +152,107 @@ async function loadPolls() {
 	if (harrisPolls.length > 0) {
 		svg.append("path")
 			.datum(harrisPolls)
-			.attr("class", "harris-line")
+			.attr("class", "line harris")
 			.attr("fill", "none")
-			.attr("stroke", "purple")
+			.attr("stroke", "blue") // Changed to blue
 			.attr("stroke-width", 2)
 			.attr("d", line)
 	}
 
-	// Add points with tooltips
-	const addPoints = (data, color) => {
-		svg.selectAll(`.point-${color}`)
-			.data(data)
-			.enter()
-			.append("circle")
-			.attr("class", `point-${color}`)
-			.attr("cx", (d) => xScale(d.date))
-			.attr("cy", (d) => yScale(d.pct))
-			.attr("r", 3)
-			.attr("fill", color)
-			.append("title")
-			.text(
-				(d) =>
-					`${d.candidate}: ${d.pct.toFixed(
-						1
-					)}%\n${d.date.toLocaleDateString()}`
-			)
-	}
+	// Add hover functionality with tooltip
+	const tooltip = d3
+		.select("body")
+		.append("div")
+		.attr("class", "tooltip")
+		.style("opacity", 0)
+		.style("position", "absolute")
+		.style("background-color", "white")
+		.style("border", "1px solid #ddd")
+		.style("border-radius", "4px")
+		.style("padding", "8px")
+		.style("pointer-events", "none")
+		.style("font-size", "12px")
+		.style("box-shadow", "2px 2px 4px rgba(0,0,0,0.1)")
+		.style("z-index", "10")
 
-	addPoints(trumpPolls, "red")
-	addPoints(bidenPolls, "blue")
-	addPoints(harrisPolls, "purple")
+	const bisect = d3.bisector((d) => d.date).left
+	const verticalLine = svg
+		.append("line")
+		.attr("class", "vertical-line")
+		.style("opacity", 0)
+		.style("stroke", "gray")
+		.style("stroke-dasharray", "4,4")
 
-	// Add legend
+	svg.append("rect")
+		.attr("width", width - margin.left - margin.right)
+		.attr("height", height)
+		.attr("transform", `translate(${margin.left},0)`)
+		.style("fill", "none")
+		.style("pointer-events", "all")
+		.on("mousemove", (event) => {
+			const mouseX = d3.pointer(event)[0]
+			const x0 = xScale.invert(mouseX + margin.left)
+
+			const trumpPoint = trumpPolls[bisect(trumpPolls, x0, 1)]
+			const bidenPoint = bidenPolls[bisect(bidenPolls, x0, 1)]
+			const harrisPoint = harrisPolls[bisect(harrisPolls, x0, 1)]
+
+			if (trumpPoint || bidenPoint || harrisPoint) {
+				verticalLine
+					.style("opacity", 1)
+					.attr("x1", mouseX + margin.left)
+					.attr("x2", mouseX + margin.left)
+					.attr("y1", 0)
+					.attr("y2", height)
+
+				tooltip.transition().duration(50).style("opacity", 0.9)
+
+				tooltip
+					.html(
+						`
+					<div style="color: red">Trump: ${trumpPoint?.pct.toFixed(1) ?? "N/A"}%</div>
+					<div style="color: purple">Biden: ${bidenPoint?.pct.toFixed(1) ?? "N/A"}%</div>
+					<div style="color: blue">Harris: ${harrisPoint?.pct.toFixed(1) ?? "N/A"}%</div>
+				`
+					)
+					.style("left", event.pageX + 15 + "px")
+					.style("top", event.pageY - 15 + "px")
+			}
+		})
+		.on("mouseout", () => {
+			verticalLine.style("opacity", 0)
+			tooltip.transition().duration(200).style("opacity", 0)
+		})
+
+	// Update legend with new colors
+	const legendData = [
+		{ label: "Trump", color: "red" },
+		{ label: "Biden", color: "purple" },
+		{ label: "Harris", color: "blue" },
+	]
+
 	const legend = svg
 		.append("g")
 		.attr("class", "legend")
-		.attr(
-			"transform",
-			`translate(${width - margin.right + 10}, ${margin.top})`
-		)
+		.attr("transform", `translate(${width - 100}, 20)`)
 
-	const legendItems = [
-		{ label: "Trump", color: "red" },
-		{ label: "Biden", color: "blue" },
-		{ label: "Harris", color: "purple" },
-	]
-
-	legendItems.forEach((item, i) => {
-		const legendGroup = legend
+	legendData.forEach((d, i) => {
+		const legendRow = legend
 			.append("g")
 			.attr("transform", `translate(0, ${i * 20})`)
 
-		legendGroup
+		legendRow
 			.append("line")
 			.attr("x1", 0)
 			.attr("x2", 20)
-			.attr("y1", 0)
-			.attr("y2", 0)
-			.attr("stroke", item.color)
+			.attr("stroke", d.color)
 			.attr("stroke-width", 2)
 
-		legendGroup
+		legendRow
 			.append("text")
-			.attr("x", 25)
+			.attr("x", 30)
 			.attr("y", 5)
-			.text(item.label)
+			.text(d.label)
 			.style("font-size", "12px")
 	})
 }

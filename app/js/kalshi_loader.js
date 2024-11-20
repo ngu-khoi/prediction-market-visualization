@@ -65,64 +65,94 @@ function renderKalshiGraph({ processedTrumpData, processedKamalaData }) {
 		.append("div")
 		.attr("class", "tooltip")
 		.style("opacity", 0)
+		.style("position", "absolute")
+		.style("background-color", "white")
+		.style("border", "1px solid #ddd")
+		.style("border-radius", "4px")
+		.style("padding", "8px")
+		.style("pointer-events", "none")
+		.style("font-size", "12px")
+		.style("box-shadow", "2px 2px 4px rgba(0,0,0,0.1)")
+		.style("z-index", "10")
 
 	// Set up scales
 	const x = d3
 		.scaleTime()
-		.domain(
-			d3.extent(
-				[...processedTrumpData, ...processedKamalaData],
-				(d) => d.timestamp
-			)
-		)
-		.range([0, width])
+		.domain([new Date("2024-01-01"), new Date("2024-11-08")])
+		.range([margin.left, width - margin.right])
 
-	const y = d3.scaleLinear().domain([0, 100]).range([height, 0])
+	const y = d3.scaleLinear().domain([0, 1]).range([height, 0])
 
 	// Add axes and gridlines
 	svg.append("g")
-		.attr("class", "axis")
+		.attr("class", "x-axis")
 		.attr("transform", `translate(0,${height})`)
-		.call(d3.axisBottom(x).ticks(d3.timeWeek.every(1))) // Weekly ticks
-
-	svg.append("g").attr("class", "axis").call(d3.axisLeft(y))
-
-	// Add x-axis label
-	svg.append("text")
-		.attr(
-			"transform",
-			`translate(${width / 2},${height + margin.bottom - 10})`
+		.call(
+			d3
+				.axisBottom(x)
+				.ticks(d3.timeWeek.every(1))
+				.tickFormat(d3.timeFormat("%b %d"))
 		)
-		.style("text-anchor", "middle")
-		.text("Date")
+		.selectAll("text")
+		.style("text-anchor", "end")
+		.attr("dx", "-.8em")
+		.attr("dy", ".15em")
+		.attr("transform", "rotate(-45)")
 
-	// Add y-axis label
-	svg.append("text")
-		.attr("transform", "rotate(-90)")
-		.attr("y", 0 - margin.left)
-		.attr("x", 0 - height / 2)
-		.attr("dy", "1em")
-		.style("text-anchor", "middle")
-		.text("Price (cents)")
+	svg.append("g")
+		.attr("class", "y-axis")
+		.attr("transform", `translate(${margin.left},0)`)
+		.call(
+			d3
+				.axisLeft(y)
+				.ticks(10)
+				.tickFormat((d) => `$${d.toFixed(2)}`)
+		)
+
+	// Add CSS styles for axes
+	svg.selectAll(".x-axis path, .y-axis path")
+		.style("stroke", "black")
+		.style("stroke-width", "1px")
+
+	svg.selectAll(".x-axis line, .y-axis line")
+		.style("stroke", "black")
+		.style("stroke-width", "0.5px")
+
+	svg.selectAll(".x-axis text, .y-axis text")
+		.style("font-size", "12px")
+		.style("font-family", "Arial")
 
 	// Add gridlines
-	;[0, 25, 50, 75, 100].forEach((value) => {
-		svg.append("line")
-			.attr("class", "guide-line")
-			.attr("x1", 0)
-			.attr("x2", width)
-			.attr("y1", y(value))
-			.attr("y2", y(value))
-			.style("stroke", "#ccc")
-			.style("stroke-dasharray", "4,4")
-			.style("opacity", 0.5)
-	})
+	svg.append("g")
+		.attr("class", "grid")
+		.attr("transform", `translate(${margin.left},0)`)
+		.call(
+			d3
+				.axisLeft(y)
+				.ticks(10)
+				.tickSize(-(width - margin.left - margin.right))
+				.tickFormat("")
+		)
+		.style("stroke-dasharray", "2,2")
+		.style("opacity", 0.1)
+
+	// Add prominent 50 cent line
+	svg.append("line")
+		.attr("class", "fifty-cent-line")
+		.attr("x1", margin.left)
+		.attr("x2", width)
+		.attr("y1", y(0.5))
+		.attr("y2", y(0.5))
+		.style("stroke", "#666")
+		.style("stroke-width", "1px")
+		.style("stroke-dasharray", "5,5")
+		.style("opacity", 0.8)
 
 	// Create and add lines
 	const createLine = d3
 		.line()
 		.x((d) => x(d.timestamp))
-		.y((d) => y(d.price_close))
+		.y((d) => y(d.price_close / 100))
 		.defined((d) => d.price_close !== null)
 
 	svg.append("path")
@@ -150,44 +180,80 @@ function renderKalshiGraph({ processedTrumpData, processedKamalaData }) {
 		.style("stroke", "gray")
 		.style("stroke-dasharray", "4,4")
 
+	// Update hover functionality section
 	svg.append("rect")
-		.attr("width", width)
+		.attr("width", width - margin.left - margin.right)
 		.attr("height", height)
+		.attr("transform", `translate(${margin.left},0)`)
 		.style("fill", "none")
 		.style("pointer-events", "all")
 		.on("mousemove", (event) => {
 			const mouseX = d3.pointer(event)[0]
-			const x0 = x.invert(mouseX)
+			const x0 = x.invert(mouseX + margin.left) // Add margin.left here
 
 			const trumpPoint =
 				processedTrumpData[bisect(processedTrumpData, x0, 1)]
 			const kamalaPoint =
 				processedKamalaData[bisect(processedKamalaData, x0, 1)]
 
-			if (trumpPoint && kamalaPoint) {
+			if (trumpPoint || kamalaPoint) {
 				verticalLine
 					.style("opacity", 1)
-					.attr("x1", mouseX)
-					.attr("x2", mouseX)
+					.attr("x1", mouseX + margin.left)
+					.attr("x2", mouseX + margin.left)
 					.attr("y1", 0)
 					.attr("y2", height)
 
-				tooltip.transition().duration(200).style("opacity", 0.9)
+				tooltip.transition().duration(50).style("opacity", 0.9)
+
 				tooltip
 					.html(
 						`
-                  Date: ${trumpPoint.timestamp.toLocaleDateString()}<br/>
-                  Time: ${trumpPoint.timestamp.toLocaleTimeString()}<br/>
-                  Trump: ${trumpPoint.price_close?.toFixed(1) ?? "N/A"}%<br/>
-                  Kamala: ${kamalaPoint.price_close?.toFixed(1) ?? "N/A"}%
-              `
+                    <div style="color: red">Trump: $${
+						(trumpPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
+					}</div>
+                    <div style="color: blue">Harris: $${
+						(kamalaPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
+					}</div>
+                `
 					)
-					.style("left", event.pageX + 10 + "px")
-					.style("top", event.pageY - 28 + "px")
+					.style("left", event.pageX + 15 + "px")
+					.style("top", event.pageY - 15 + "px")
 			}
 		})
 		.on("mouseout", () => {
 			verticalLine.style("opacity", 0)
-			tooltip.transition().duration(500).style("opacity", 0)
+			tooltip.transition().duration(200).style("opacity", 0)
 		})
+
+	// Update legend
+	const legend = svg
+		.append("g")
+		.attr("class", "legend")
+		.attr("transform", `translate(${width - 100}, 20)`)
+
+	const legendData = [
+		{ label: "Trump", color: "red" },
+		{ label: "Harris", color: "blue" },
+	]
+
+	legendData.forEach((d, i) => {
+		const legendRow = legend
+			.append("g")
+			.attr("transform", `translate(0, ${i * 20})`)
+
+		legendRow
+			.append("line")
+			.attr("x1", 0)
+			.attr("x2", 20)
+			.attr("stroke", d.color)
+			.attr("stroke-width", 2)
+
+		legendRow
+			.append("text")
+			.attr("x", 30)
+			.attr("y", 5)
+			.text(d.label)
+			.style("font-size", "12px")
+	})
 }

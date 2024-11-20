@@ -71,23 +71,23 @@ function renderPolymarketGraph({
 		.append("div")
 		.attr("class", "tooltip")
 		.style("opacity", 0)
+		.style("position", "absolute")
+		.style("background-color", "white")
+		.style("border", "1px solid #ddd")
+		.style("border-radius", "4px")
+		.style("padding", "8px")
+		.style("pointer-events", "none")
+		.style("font-size", "12px")
+		.style("box-shadow", "2px 2px 4px rgba(0,0,0,0.1)")
+		.style("z-index", "10")
 
 	// Set up scales
 	const x = d3
 		.scaleTime()
-		.domain(
-			d3.extent(
-				[
-					...processedTrumpData,
-					...processedKamalaData,
-					...processedBidenData,
-				],
-				(d) => d.timestamp
-			)
-		)
-		.range([0, width])
+		.domain([new Date("2024-01-01"), new Date("2024-11-08")])
+		.range([margin.left, width - margin.right])
 
-	const y = d3.scaleLinear().domain([0, 100]).range([height, 0])
+	const y = d3.scaleLinear().domain([0, 1]).range([height, 0])
 
 	// Add axes and gridlines
 	svg.append("g")
@@ -112,7 +112,7 @@ function renderPolymarketGraph({
 			d3
 				.axisLeft(y)
 				.ticks(10)
-				.tickFormat((d) => d + "%")
+				.tickFormat((d) => `$${d.toFixed(2)}`)
 		)
 
 	// Add x-axis label
@@ -130,7 +130,7 @@ function renderPolymarketGraph({
 		.attr("transform", "rotate(-90)")
 		.attr("y", -margin.left + 20)
 		.attr("x", -height / 2)
-		.text("Probability (%)")
+		.text("Price ($)")
 
 	// Add CSS styles for the axes
 	svg.selectAll(".x-axis path, .y-axis path")
@@ -148,46 +148,34 @@ function renderPolymarketGraph({
 	// Add gridlines
 	svg.append("g")
 		.attr("class", "grid")
-		.attr("transform", `translate(0,${height})`)
-		.call(d3.axisBottom(x).ticks(10).tickSize(-height).tickFormat(""))
-		.style("stroke-dasharray", "2,2")
-		.style("opacity", 0.1)
-
-	svg.append("g")
-		.attr("class", "grid")
 		.attr("transform", `translate(${margin.left},0)`)
-		.call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat(""))
+		.call(
+			d3
+				.axisLeft(y)
+				.ticks(10)
+				.tickSize(-(width - margin.left - margin.right))
+				.tickFormat("")
+		)
 		.style("stroke-dasharray", "2,2")
 		.style("opacity", 0.1)
 
-	// Ensure we're showing the most recent data by adjusting the x-axis domain
-	const allDates = [
-		...processedTrumpData.map((d) => d.timestamp),
-		...processedKamalaData.map((d) => d.timestamp),
-		...processedBidenData.map((d) => d.timestamp),
-	]
-
-	const latestDate = new Date(Math.max(...allDates))
-	const earliestDate = new Date(Math.min(...allDates))
-
-	// Add one day to latest date to ensure we see all data
-	latestDate.setDate(latestDate.getDate() + 1)
-
-	x.domain([earliestDate, latestDate])
-
-	// Update the x-axis with new domain
-	svg.select(".x-axis").call(
-		d3
-			.axisBottom(x)
-			.ticks(d3.timeWeek.every(1))
-			.tickFormat(d3.timeFormat("%b %d"))
-	)
+	// Add prominent 50 cent line
+	svg.append("line")
+		.attr("class", "fifty-cent-line")
+		.attr("x1", margin.left)
+		.attr("x2", width)
+		.attr("y1", y(0.5))
+		.attr("y2", y(0.5))
+		.style("stroke", "#666")
+		.style("stroke-width", "1px")
+		.style("stroke-dasharray", "5,5")
+		.style("opacity", 0.8)
 
 	// Create and add lines
 	const createLine = d3
 		.line()
 		.x((d) => x(d.timestamp))
-		.y((d) => y(d.price_close))
+		.y((d) => y(d.price_close / 100))
 		.defined((d) => d.price_close !== null)
 
 	// Trump line (red)
@@ -199,19 +187,19 @@ function renderPolymarketGraph({
 		.attr("stroke-width", 2)
 		.attr("d", createLine)
 
-	// Biden line (blue)
+	// Harris line (blue)
 	svg.append("path")
-		.datum(processedBidenData)
-		.attr("class", "line biden")
+		.datum(processedKamalaData)
+		.attr("class", "line kamala")
 		.attr("fill", "none")
 		.attr("stroke", "blue")
 		.attr("stroke-width", 2)
 		.attr("d", createLine)
 
-	// Harris line (purple)
+	// Biden line (purple)
 	svg.append("path")
-		.datum(processedKamalaData)
-		.attr("class", "line kamala")
+		.datum(processedBidenData)
+		.attr("class", "line biden")
 		.attr("fill", "none")
 		.attr("stroke", "purple")
 		.attr("stroke-width", 2)
@@ -227,13 +215,14 @@ function renderPolymarketGraph({
 		.style("stroke-dasharray", "4,4")
 
 	svg.append("rect")
-		.attr("width", width)
+		.attr("width", width - margin.left - margin.right)
 		.attr("height", height)
+		.attr("transform", `translate(${margin.left},0)`)
 		.style("fill", "none")
 		.style("pointer-events", "all")
 		.on("mousemove", (event) => {
 			const mouseX = d3.pointer(event)[0]
-			const x0 = x.invert(mouseX)
+			const x0 = x.invert(mouseX + margin.left) // Add margin.left here
 
 			const trumpPoint =
 				processedTrumpData[bisect(processedTrumpData, x0, 1)]
@@ -245,37 +234,35 @@ function renderPolymarketGraph({
 			if (trumpPoint || kamalaPoint || bidenPoint) {
 				verticalLine
 					.style("opacity", 1)
-					.attr("x1", mouseX)
-					.attr("x2", mouseX)
+					.attr("x1", mouseX + margin.left)
+					.attr("x2", mouseX + margin.left)
 					.attr("y1", 0)
 					.attr("y2", height)
 
-				tooltip.transition().duration(200).style("opacity", 0.9)
+				tooltip.transition().duration(50).style("opacity", 0.9)
+
 				tooltip
 					.html(
 						`
-                  Date: ${(
-						trumpPoint ||
-						kamalaPoint ||
-						bidenPoint
-					).timestamp.toLocaleDateString()}<br/>
-                  Time: ${(
-						trumpPoint ||
-						kamalaPoint ||
-						bidenPoint
-					).timestamp.toLocaleTimeString()}<br/>
-                  Trump: ${trumpPoint?.price_close?.toFixed(1) ?? "N/A"}%<br/>
-                  Biden: ${bidenPoint?.price_close?.toFixed(1) ?? "N/A"}%<br/>
-                  Harris: ${kamalaPoint?.price_close?.toFixed(1) ?? "N/A"}%
-              `
+                      <div style="color: red">Trump: $${
+							(trumpPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
+						}</div>
+                      <div style="color: purple">Biden: $${
+							(bidenPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
+						}</div>
+                      <div style="color: blue">Harris: $${
+							(kamalaPoint?.price_close / 100)?.toFixed(2) ??
+							"N/A"
+						}</div>
+                  `
 					)
-					.style("left", event.pageX + 10 + "px")
-					.style("top", event.pageY - 28 + "px")
+					.style("left", event.pageX + 15 + "px")
+					.style("top", event.pageY - 15 + "px")
 			}
 		})
 		.on("mouseout", () => {
 			verticalLine.style("opacity", 0)
-			tooltip.transition().duration(500).style("opacity", 0)
+			tooltip.transition().duration(200).style("opacity", 0)
 		})
 
 	// Add legend
@@ -286,8 +273,8 @@ function renderPolymarketGraph({
 
 	const legendData = [
 		{ label: "Trump", color: "red" },
-		{ label: "Biden", color: "blue" },
-		{ label: "Harris", color: "purple" },
+		{ label: "Biden", color: "purple" },
+		{ label: "Harris", color: "blue" },
 	]
 
 	legendData.forEach((d, i) => {
