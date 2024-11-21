@@ -9,12 +9,13 @@ export default class PolymarketVisualization {
 		this.yScale = null
 		this.parseDate = d3.timeParse("%m-%d-%Y %H:%M")
 		this.data = null
+		this.currentStep = null
 
-		// Add resize observer
+		// Modify resize observer
 		this.resizeObserver = new ResizeObserver((entries) => {
 			const entry = entries[0]
 			if (entry.contentRect.width > 0 && this.data) {
-				this.rebuildChart()
+				this.handleResize(entry.contentRect.width)
 			}
 		})
 	}
@@ -23,6 +24,32 @@ export default class PolymarketVisualization {
 		await this.loadData()
 		// Start observing the container
 		this.resizeObserver.observe(this.container.node())
+	}
+
+	handleResize(containerWidth) {
+		this.width = containerWidth - this.margin.left - this.margin.right
+
+		// Update SVG dimensions
+		this.svg.attr(
+			"width",
+			this.width + this.margin.left + this.margin.right
+		)
+
+		// Update clipPath width
+		this.svg.select("#clip-polymarket rect").attr("width", this.width)
+
+		// Update x scale range
+		this.xScale.range([0, this.width])
+
+		// Update legend position
+		this.svg
+			.select(".legend")
+			.attr("transform", `translate(${this.width + 10}, 0)`)
+
+		// If we have a current step, update with current data
+		if (this.currentStep) {
+			this.updateVisualization(this.currentStep, false) // false = no transition
+		}
 	}
 
 	rebuildChart() {
@@ -165,7 +192,10 @@ export default class PolymarketVisualization {
 		})
 	}
 
-	updateVisualization(step) {
+	updateVisualization(step, shouldTransition = true) {
+		// Store current step
+		this.currentStep = step
+
 		// If container is hidden or zero width, wait for resize
 		const containerRect = this.container.node().getBoundingClientRect()
 		if (containerRect.width === 0) {
@@ -178,10 +208,51 @@ export default class PolymarketVisualization {
 			this.rebuildChart()
 		}
 
-		const t = d3.transition().duration(750)
+		const t = shouldTransition
+			? d3.transition().duration(1500).ease(d3.easeCubicInOut)
+			: d3.transition().duration(0)
+
+		// Filter data first
+		const filteredData = {}
+		Object.entries(this.data).forEach(([candidate, data]) => {
+			filteredData[candidate] = data.filter((d) => {
+				const [start, end] = step.xDomain
+				return d.timestamp >= start && d.timestamp <= end
+			})
+		})
 
 		// Update x scale domain
 		this.xScale.domain(step.xDomain)
+
+		// Handle debate line inside the clipped area
+		const chartArea = this.svg.select("[clip-path='url(#clip-polymarket)']")
+
+		const debateLine = chartArea
+			.selectAll(".debate-line")
+			.data(step.showDebateLine ? [new Date("2024-06-27")] : [])
+
+		// Remove debate line if not needed
+		debateLine.exit().transition(t).style("opacity", 0).remove()
+
+		// Add or update debate line
+		const debateLineEnter = debateLine
+			.enter()
+			.append("line")
+			.attr("class", "debate-line")
+			.attr("y1", 0)
+			.attr("y2", this.height)
+			.style("stroke", "#666")
+			.style("stroke-width", "2px")
+			.style("stroke-dasharray", "6,3")
+			.style("opacity", 0)
+
+		// Merge and transition
+		debateLine
+			.merge(debateLineEnter)
+			.transition(t)
+			.attr("x1", (d) => this.xScale(d))
+			.attr("x2", (d) => this.xScale(d))
+			.style("opacity", 1)
 
 		// Update axes with transition
 		this.svg
@@ -198,16 +269,10 @@ export default class PolymarketVisualization {
 			.y((d) => this.yScale(d.price))
 			.curve(d3.curveMonotoneX)
 
-		Object.entries(this.data).forEach(([candidate, data]) => {
-			// Filter data to only show points within the domain
-			const filteredData = data.filter((d) => {
-				const [start, end] = step.xDomain
-				return d.timestamp >= start && d.timestamp <= end
-			})
-
+		Object.entries(filteredData).forEach(([candidate, data]) => {
 			this.svg
 				.select(`.line.${candidate}`)
-				.datum(filteredData) // Use filtered data
+				.datum(data)
 				.transition(t)
 				.attr("d", line)
 		})
