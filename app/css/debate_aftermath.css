@@ -33,8 +33,3 @@
 .debate-step.debate-step-active {
   opacity: 1;
 }
-
-/* Hide the original step content since we're using the card */
-.debate-step-content {
-  display: none;
-}

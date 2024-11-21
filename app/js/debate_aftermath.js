@@ -5,19 +5,30 @@ class DebateAftermathViz {
 		this.steps = [
 			{
 				xDomain: [new Date("2024-01-01"), new Date("2024-11-08")],
-				annotation: "Polling trends throughout 2024",
+				annotation: "Presidential polling trends throughout 2024",
 				yDomain: [30, 60],
+				showDebateLine: false,
 			},
 			{
 				xDomain: [new Date("2024-01-11"), new Date("2024-07-21")],
-				annotation: "Biden maintained a steady lead in early polling",
+				annotation:
+					"Trump maintained a steady but small lead in early 2024 polling",
 				yDomain: [30, 60],
+				showDebateLine: false,
+			},
+			{
+				xDomain: [new Date("2024-01-11"), new Date("2024-07-21")],
+				annotation:
+					"The first presidential debate between Biden and Trump was held on June 27th",
+				yDomain: [30, 60],
+				showDebateLine: true,
 			},
 			{
 				xDomain: [new Date("2024-06-23"), new Date("2024-07-20")],
 				annotation:
-					"After the debate, Biden's support declined while Trump gained ground",
+					"After a perceived poor performance in the debate, Biden's support declined while Trump's lead grew",
 				yDomain: [36, 46],
+				showDebateLine: true,
 			},
 		]
 	}
@@ -209,7 +220,10 @@ class DebateAftermathViz {
 
 		// Setup dimensions
 		const margin = { top: 40, right: 100, bottom: 50, left: 60 } // Increased right margin for legend
-		const containerWidth = container.node().getBoundingClientRect().width
+
+		// Get width from the step-content container
+		const stepContent = d3.select(".step-content")
+		const containerWidth = stepContent.node().getBoundingClientRect().width
 		const width = containerWidth - margin.left - margin.right
 		const height = 400 - margin.top - margin.bottom
 
@@ -267,7 +281,7 @@ class DebateAftermathViz {
 			.line()
 			.x((d) => xScale(d.date))
 			.y((d) => yScale(d.pct))
-			.curve(d3.curveMonotoneX) // Added curve interpolation for smoother lines
+			.curve(d3.curveMonotoneX)
 
 		// Draw lines with stored references
 		this.trumpLine = svg
@@ -298,7 +312,7 @@ class DebateAftermathViz {
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr("transform", `translate(${width + 10}, 0)`) // Positioned outside the chart
+			.attr("transform", `translate(${width + 10}, 0)`)
 
 		const legendData = [
 			{ label: "Trump", color: "red" },
@@ -333,15 +347,48 @@ class DebateAftermathViz {
 		this.currentStep = stepIndex
 
 		const step = this.steps[stepIndex]
-		const t = d3.transition().duration(1500).ease(d3.easeCubicInOut)
+		const previousDomain = this.xScale.domain()
+		const previousYDomain = this.yScale.domain()
 
-		// Update x-axis domain
+		// Store the current view state
+		const oldXScale = this.xScale.copy()
+		const oldYScale = this.yScale.copy()
+
+		// Update scales with new domains
 		this.xScale.domain(step.xDomain)
-
-		// Update y-axis domain and transition
 		this.yScale.domain(step.yDomain)
 
-		// Update both axes with transition
+		const t = d3.transition().duration(1500).ease(d3.easeCubicInOut)
+
+		// Handle debate line
+		const debateLine = this.svg
+			.selectAll(".debate-line")
+			.data(step.showDebateLine ? [new Date("2024-06-27")] : [])
+
+		// Remove debate line if not needed
+		debateLine.exit().transition(t).style("opacity", 0).remove()
+
+		// Add or update debate line
+		const debateLineEnter = debateLine
+			.enter()
+			.append("line")
+			.attr("class", "debate-line")
+			.attr("y1", 0)
+			.attr("y2", this.height)
+			.style("stroke", "#666")
+			.style("stroke-width", "2px")
+			.style("stroke-dasharray", "6,3")
+			.style("opacity", 0)
+
+		// Merge and transition
+		debateLine
+			.merge(debateLineEnter)
+			.transition(t)
+			.attr("x1", (d) => this.xScale(d))
+			.attr("x2", (d) => this.xScale(d))
+			.style("opacity", 1)
+
+		// Update axes with transition
 		this.svg
 			.select(".x-axis")
 			.transition(t)
@@ -349,39 +396,38 @@ class DebateAftermathViz {
 
 		this.svg.select(".y-axis").transition(t).call(d3.axisLeft(this.yScale))
 
-		// Update line paths with transition
-		const line = d3
+		// Create line generators for old and new scales
+		const oldLine = d3
+			.line()
+			.x((d) => oldXScale(d.date))
+			.y((d) => oldYScale(d.pct))
+			.curve(d3.curveMonotoneX)
+
+		const newLine = d3
 			.line()
 			.x((d) => this.xScale(d.date))
 			.y((d) => this.yScale(d.pct))
 			.curve(d3.curveMonotoneX)
 
-		// Filter data for current domain
-		const currentDomain = step.xDomain
-		const filteredData = (candidate) =>
-			this.relevantPolls
-				.filter((d) => d.candidate === candidate)
-				.filter(
-					(d) =>
-						d.date >= currentDomain[0] && d.date <= currentDomain[1]
-				)
+		// Function to update each line with proper transition
+		const updateLine = (lineElement, candidate) => {
+			const allData = this.relevantPolls.filter(
+				(d) => d.candidate === candidate
+			)
 
-		this.trumpLine
-			.datum(filteredData("Trump"))
-			.transition(t)
-			.attr("d", line)
+			// Start with the full dataset and current path
+			lineElement.datum(allData).attr("d", oldLine)
 
-		this.bidenLine
-			.datum(filteredData("Biden"))
-			.transition(t)
-			.attr("d", line)
+			// Transition to the new view
+			lineElement.transition(t).attr("d", newLine).style("opacity", 1)
+		}
 
-		this.harrisLine
-			.datum(filteredData("Harris"))
-			.transition(t)
-			.attr("d", line)
+		// Update all lines
+		updateLine(this.trumpLine, "Trump")
+		updateLine(this.bidenLine, "Biden")
+		updateLine(this.harrisLine, "Harris")
 
-		// Remove the old annotation group code since we're using the card now
+		// Remove the old annotation group
 		this.annotationGroup.remove()
 	}
 }
