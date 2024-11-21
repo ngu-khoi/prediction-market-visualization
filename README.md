@@ -4,7 +4,7 @@ An interactive analysis of polling data and prediction markets during the 2024 U
 ## Key Visualizations
 
 ### Electoral Map & Prediction Market Dashboard
-Interactive visualization showing the final electoral college results alongside real-time prediction market prices from Polymarket and Kalshi. Users can explore state-by-state results and see how market prices evolved over time.
+Interactive visualization showing the final electoral college results alongside real-time prediction market prices from Polymarket and Kalshi. Users can explore state-by-state results and see how market prices evolved over time. Show any cool moments where the market was right or wrong.
 
 ### Key Campaign Events Timeline
 Scrollytelling narrative highlighting major campaign moments and their impact on both polls and prediction markets:

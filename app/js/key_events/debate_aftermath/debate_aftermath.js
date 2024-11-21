@@ -1,11 +1,15 @@
 export default class DebateAftermathViz {
-	constructor({ PollingVisualization } = {}) {
+	constructor({ PollingVisualization, PolymarketVisualization } = {}) {
 		if (!PollingVisualization) {
 			throw new Error("PollingVisualization is required")
+		}
+		if (!PolymarketVisualization) {
+			throw new Error("PolymarketVisualization is required")
 		}
 		this.container = d3.select("#debate-aftermath")
 		this.currentStep = 0
 		this.PollingVisualization = PollingVisualization
+		this.PolymarketVisualization = PolymarketVisualization
 		this.steps = [
 			{
 				xDomain: [new Date("2024-01-01"), new Date("2024-11-08")],
@@ -31,7 +35,7 @@ export default class DebateAftermathViz {
 				showPolymarket: false,
 			},
 			{
-				xDomain: [new Date("2024-06-23"), new Date("2024-07-20")],
+				xDomain: [new Date("2024-06-13"), new Date("2024-07-30")],
 				annotation:
 					"After a perceived poor performance in the debate, Biden's support declined while Trump's lead grew",
 				yDomain: [36, 46],
@@ -39,12 +43,12 @@ export default class DebateAftermathViz {
 				showPolymarket: false,
 			},
 			{
-				xDomain: [new Date("2024-06-23"), new Date("2024-07-20")],
+				xDomain: [new Date("2024-06-13"), new Date("2024-07-30")],
 				annotation:
 					"Let's see how this compares to the Polymarket prediction market",
 				yDomain: [36, 46],
 				showDebateLine: true,
-				showPolymarket: true,
+				showPolymarket: false,
 				polymarketOpacity: 0,
 			},
 			{
@@ -60,7 +64,7 @@ export default class DebateAftermathViz {
 			{
 				xDomain: [new Date("2024-01-11"), new Date("2024-07-21")],
 				annotation:
-					"Trump maintains a large and steady lead in prediction markets",
+					"Trump maintained a larger lead in early 2024 polling, but the gap closed leading up to the debate",
 				yDomain: [30, 60],
 				showDebateLine: false,
 				showPolymarket: true,
@@ -78,7 +82,7 @@ export default class DebateAftermathViz {
 				pollsOpacity: 1,
 			},
 			{
-				xDomain: [new Date("2024-06-23"), new Date("2024-07-20")],
+				xDomain: [new Date("2024-06-13"), new Date("2024-07-30")],
 				annotation:
 					"Biden's support crashes in both polls and prediction markets",
 				yDomain: [36, 46],
@@ -124,14 +128,34 @@ export default class DebateAftermathViz {
 			.style("z-index", "1000")
 			.style("pointer-events", "none")
 
-		// Add chart container
-		vizContainer
+		// Add charts container with flexbox
+		const chartsContainer = vizContainer
+			.append("div")
+			.style("display", "flex")
+			.style("gap", "20px")
+			.style("margin-top", "150px")
+			.style("width", "100%")
+
+		// Add polling chart container
+		chartsContainer
 			.append("div")
 			.attr("id", "debate-polls-chart")
 			.attr("class", "chart-container")
 			.style("height", "400px")
-			.style("width", "100%")
-			.style("margin-top", "150px")
+			.style("width", "100%") // Start at full width
+			.style("transition", "width 0.5s ease") // Smooth transition
+
+		// Add polymarket chart container
+		chartsContainer
+			.append("div")
+			.attr("id", "debate-polymarket-chart")
+			.attr("class", "chart-container")
+			.style("height", "400px")
+			.style("width", "0")
+			.style("min-width", "0")
+			.style("opacity", "0")
+			.style("transition", "all 0.5s ease")
+			.style("overflow", "hidden")
 
 		// Create steps container
 		const stepsContainer = this.container
@@ -154,10 +178,10 @@ export default class DebateAftermathViz {
 		this.pollingViz = new this.PollingVisualization("debate-polls-chart")
 		await this.pollingViz.initialize()
 
-		// this.polymarketViz = new PolymarketVisualization(
-		// 	"debate-polymarket-chart"
-		// )
-		// await this.polymarketViz.initialize()
+		this.polymarketViz = new this.PolymarketVisualization(
+			"debate-polymarket-chart"
+		)
+		await this.polymarketViz.initialize()
 
 		// Initialize scroll handling
 		this.initializeScrollHandling()
@@ -250,6 +274,51 @@ export default class DebateAftermathViz {
 	updateVisualization(stepIndex) {
 		if (this.currentStep === stepIndex) return
 		this.currentStep = stepIndex
-		this.pollingViz.updateVisualization(this.steps[stepIndex])
+
+		const step = this.steps[stepIndex]
+		const polymarketChart = this.container.select(
+			"#debate-polymarket-chart"
+		)
+		const pollsChart = this.container.select("#debate-polls-chart")
+
+		// First update container widths with transition
+		if (step.showPolymarket) {
+			// First make polymarket visible but with 0 width
+			polymarketChart
+				.style("display", "block")
+				.style("opacity", "1")
+				.style("width", "0")
+
+			// Force a reflow
+			polymarketChart.node().offsetHeight
+
+			// Then transition to 50% width
+			setTimeout(() => {
+				pollsChart.style("width", "50%")
+				polymarketChart.style("width", "50%")
+
+				// Update visualizations after width transition
+				setTimeout(() => {
+					this.pollingViz.updateVisualization(step)
+					this.polymarketViz.updateVisualization(step)
+				}, 500)
+			}, 50)
+		} else {
+			// Transition back to full width polls
+			pollsChart.style("width", "100%")
+			polymarketChart
+				.style("width", "0")
+				.style("opacity", "0")
+				.transition()
+				.duration(500)
+				.on("end", function () {
+					d3.select(this).style("display", "none")
+				})
+
+			// Update polling visualization after width transition
+			setTimeout(() => {
+				this.pollingViz.updateVisualization(step)
+			}, 500)
+		}
 	}
 }

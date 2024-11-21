@@ -117,8 +117,24 @@ export default class PollingVisualization {
 			.y((d) => yScale(d.pct))
 			.curve(d3.curveMonotoneX)
 
-		// Draw lines with stored references
-		this.trumpLine = svg
+		// Add clipPath definition
+		this.svg
+			.append("defs")
+			.append("clipPath")
+			.attr("id", "clip-polls")
+			.append("rect")
+			.attr("width", width)
+			.attr("height", height)
+			.attr("x", 0)
+			.attr("y", 0)
+
+		// Add a group for the clipped content
+		const chartArea = this.svg
+			.append("g")
+			.attr("clip-path", "url(#clip-polls)")
+
+		// Move the lines into the clipped group
+		this.trumpLine = chartArea
 			.append("path")
 			.datum(relevantPolls.filter((d) => d.candidate === "Trump"))
 			.attr("fill", "none")
@@ -126,36 +142,36 @@ export default class PollingVisualization {
 			.attr("stroke-width", 2)
 			.attr("d", line)
 
-		this.bidenLine = svg
+		this.bidenLine = chartArea
 			.append("path")
 			.datum(relevantPolls.filter((d) => d.candidate === "Biden"))
-			.attr("fill", "none")
-			.attr("stroke", "blue")
-			.attr("stroke-width", 2)
-			.attr("d", line)
-
-		this.harrisLine = svg
-			.append("path")
-			.datum(relevantPolls.filter((d) => d.candidate === "Harris"))
 			.attr("fill", "none")
 			.attr("stroke", "purple")
 			.attr("stroke-width", 2)
 			.attr("d", line)
 
+		this.harrisLine = chartArea
+			.append("path")
+			.datum(relevantPolls.filter((d) => d.candidate === "Harris"))
+			.attr("fill", "none")
+			.attr("stroke", "blue")
+			.attr("stroke-width", 2)
+			.attr("d", line)
+
 		// Add legend
-		const legend = svg
+		this.legend = svg
 			.append("g")
 			.attr("class", "legend")
 			.attr("transform", `translate(${width + 10}, 0)`)
 
 		const legendData = [
 			{ label: "Trump", color: "red" },
-			{ label: "Biden", color: "blue" },
-			{ label: "Harris", color: "purple" },
+			{ label: "Biden", color: "purple" },
+			{ label: "Harris", color: "blue" },
 		]
 
 		legendData.forEach((d, i) => {
-			const legendRow = legend
+			const legendRow = this.legend
 				.append("g")
 				.attr("transform", `translate(0, ${i * 20})`)
 
@@ -177,14 +193,27 @@ export default class PollingVisualization {
 	}
 
 	updateVisualization(step) {
-		const previousDomain = this.xScale.domain()
-		const previousYDomain = this.yScale.domain()
+		// Recalculate width based on current container size
+		const containerRect = this.container.node().getBoundingClientRect()
+		const newWidth =
+			containerRect.width - this.margin.left - this.margin.right
 
-		// Store the current view state
+		// Update SVG dimensions
+		this.width = newWidth
+		this.svg.attr("width", newWidth + this.margin.left + this.margin.right)
+
+		// Update x scale range
+		this.xScale.range([0, newWidth])
+
+		// Update legend position
+		this.svg
+			.select(".legend")
+			.attr("transform", `translate(${newWidth + 10}, 0)`)
+
 		const oldXScale = this.xScale.copy()
 		const oldYScale = this.yScale.copy()
 
-		// Update scales with new domains
+		// Update domains
 		this.xScale.domain(step.xDomain)
 		this.yScale.domain(step.yDomain)
 
@@ -241,11 +270,15 @@ export default class PollingVisualization {
 
 		// Function to update each line with proper transition
 		const updateLine = (lineElement, candidate) => {
-			const allData = this.relevantPolls.filter(
-				(d) => d.candidate === candidate
-			)
+			// Filter data to only show points within the domain
+			const allData = this.relevantPolls
+				.filter((d) => d.candidate === candidate)
+				.filter((d) => {
+					const [start, end] = step.xDomain
+					return d.date >= start && d.date <= end
+				})
 
-			// Start with the full dataset and current path
+			// Start with the filtered dataset and current path
 			lineElement.datum(allData).attr("d", oldLine)
 
 			// Transition to the new view
