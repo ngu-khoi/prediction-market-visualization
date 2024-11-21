@@ -157,19 +157,20 @@ export default class DebateAftermathViz {
 			.style("transition", "all 0.5s ease")
 			.style("overflow", "hidden")
 
-		// Create steps container
+		// Create steps container with moderate space
 		const stepsContainer = this.container
 			.append("div")
 			.attr("class", "debate-steps-container")
-			.style("padding-top", "50vh")
-			.style("padding-bottom", "50vh")
+			.style("padding-top", "80vh")
+			.style("padding-bottom", "80vh")
 
-		// Add steps
+		// Add steps with moderate padding between them
 		this.steps.forEach((step, i) => {
 			stepsContainer
 				.append("div")
 				.attr("class", "debate-step")
 				.style("height", "60vh")
+				.style("margin-bottom", "70vh")
 				.style("opacity", "0")
 				.html(step.annotation)
 		})
@@ -259,8 +260,8 @@ export default class DebateAftermathViz {
 			},
 			{
 				root: null,
-				threshold: 0.5,
-				rootMargin: "-35% 0px -35% 0px",
+				threshold: 0.35,
+				rootMargin: "-25% 0px",
 			}
 		)
 
