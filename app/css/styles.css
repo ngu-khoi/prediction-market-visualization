@@ -58,15 +58,11 @@ h2 {
 /* Scrollama Section Styles */
 .step {
   position: relative;
-  min-height: 100vh;
   padding: 0;
-  border: 1px solid red;
 }
 
 .step-content {
   position: relative;
-  top: auto;
-  transform: none;
   background: white;
   padding: 2rem;
   margin: 2rem auto;
@@ -74,16 +70,6 @@ h2 {
   max-width: 1000px;
   z-index: 1;
   overflow: visible;
-  max-height: none;
-}
-
-/* Key Events Section */
-[data-step="key-events"] .step-content {
-  padding: 2rem;
-  transform: none;
-  position: relative;
-  top: 0;
-  margin: 10vh auto;
 }
 
 /* Subsection Styles */
@@ -103,24 +89,7 @@ h2 {
   font-size: 1.3rem;
 }
 
-.step-content > h2 + div {
-  margin-top: 2rem;
-}
-
 /* Visualization Section Styles */
-.step[data-step="final"] {
-  padding: 10vh 0;
-}
-
-.step[data-step="final"] .step-content {
-  pointer-events: all;
-  transform: none;
-  top: 0;
-  position: relative;
-  padding-top: 5vh;
-  padding-bottom: 5vh;
-}
-
 .visualizations-container {
   width: 100%;
   margin: 0 auto;
@@ -155,25 +124,9 @@ h2 {
 }
 
 /* Chart Elements */
-.dem-line {
-  stroke: blue;
-  stroke-width: 2;
-}
-
-.rep-line {
-  stroke: red;
-  stroke-width: 2;
-}
-
 .line {
   fill: none;
   stroke-width: 2;
-}
-
-.dem-point:hover, 
-.rep-point:hover {
-  r: 5;
-  cursor: pointer;
 }
 
 /* Axes and Grid */
@@ -213,11 +166,12 @@ h2 {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   max-width: 200px;
   white-space: nowrap;
+  z-index: 1000;
 }
 
-/* Add specific styles for debate aftermath section */
+/* Debate Aftermath specific styles */
 [data-step="debate-aftermath"] {
-  min-height: 400vh;
+  min-height: 300vh;
 }
 
 [data-step="debate-aftermath"] .step-content {
@@ -228,18 +182,7 @@ h2 {
   background: none;
 }
 
-/* Update the scroll container styles */
-.scroll-container {
-  position: relative;
-  display: flex;
-  gap: 2rem;
-  padding: 2rem 1rem;
-  min-height: 100vh;
-}
-
-.graph-container.sticky {
-  position: sticky;
-  top: 15vh;
-  align-self: flex-start;
-  height: 70vh;
+/* Remove the red border from previous debugging */
+.step {
+  border: none;
 }

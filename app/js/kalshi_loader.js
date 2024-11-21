@@ -193,7 +193,7 @@ function renderKalshiGraph({ processedTrumpData, processedKamalaData }) {
 		.style("pointer-events", "all")
 		.on("mousemove", (event) => {
 			const mouseX = d3.pointer(event)[0]
-			const x0 = x.invert(mouseX + margin.left) // Add margin.left here
+			const x0 = x.invert(mouseX + margin.left)
 
 			const trumpPoint =
 				processedTrumpData[bisect(processedTrumpData, x0, 1)]
@@ -210,16 +210,20 @@ function renderKalshiGraph({ processedTrumpData, processedKamalaData }) {
 
 				tooltip.transition().duration(50).style("opacity", 0.9)
 
+				// Updated tooltip HTML to include date
 				tooltip
 					.html(
 						`
-                    <div style="color: red">Trump: $${
+                  <div style="margin-bottom: 5px">${d3.timeFormat("%B %d, %Y")(
+						x0
+					)}</div>
+                  <div style="color: red">Trump: $${
 						(trumpPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
 					}</div>
-                    <div style="color: blue">Harris: $${
+                  <div style="color: blue">Harris: $${
 						(kamalaPoint?.price_close / 100)?.toFixed(2) ?? "N/A"
 					}</div>
-                `
+                  `
 					)
 					.style("left", event.pageX + 15 + "px")
 					.style("top", event.pageY - 15 + "px")
