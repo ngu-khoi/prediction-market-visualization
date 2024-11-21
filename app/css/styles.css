@@ -40,6 +40,7 @@ h2 {
   padding: 10px;
   border-radius: 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 150px;
 }
 
 .progress-step {
@@ -48,11 +49,29 @@ h2 {
   border-radius: 15px;
   cursor: pointer;
   transition: all 0.3s ease;
+  opacity: 0.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  width: 110px;
+  user-select: none; /* Prevent text selection */
+}
+
+.progress-step:hover {
+  opacity: 0.8;
+  background: rgba(0, 123, 255, 0.1);
 }
 
 .progress-step.active {
   background: #007bff;
   color: white;
+  opacity: 1;
+  font-weight: bold;
+}
+
+.progress-step.active:hover {
+  background: #0056b3;
 }
 
 /* Scrollama Section Styles */

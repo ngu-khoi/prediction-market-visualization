@@ -39,8 +39,57 @@ async function loadModules() {
 	}
 }
 
+function initializeProgressIndicator() {
+	const progressSteps = document.querySelectorAll(".progress-step")
+	const sections = document.querySelectorAll("section.step")
+
+	// Add click handlers to progress steps
+	progressSteps.forEach((step) => {
+		step.addEventListener("click", () => {
+			const targetStep = step.dataset.step
+			const targetSection = document.querySelector(
+				`section[data-step="${targetStep}"]`
+			)
+
+			if (targetSection) {
+				targetSection.scrollIntoView({
+					behavior: "smooth",
+					block: "start",
+				})
+			}
+		})
+	})
+
+	// Create a new Intersection Observer
+	const observer = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					const stepName = entry.target.dataset.step
+					progressSteps.forEach((step) => {
+						if (step.dataset.step === stepName) {
+							step.classList.add("active")
+						} else {
+							step.classList.remove("active")
+						}
+					})
+				}
+			})
+		},
+		{
+			threshold: 0.5,
+			rootMargin: "0px",
+		}
+	)
+
+	sections.forEach((section) => observer.observe(section))
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
 	try {
+		// Initialize progress indicator
+		initializeProgressIndicator()
+
 		const modules = await loadModules()
 		console.log("Loaded modules:", modules)
 
