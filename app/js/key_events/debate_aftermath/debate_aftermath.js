@@ -274,6 +274,9 @@ export default class DebateAftermathViz {
 
 	updateVisualization(stepIndex) {
 		if (this.currentStep === stepIndex) return
+		const wasShowingPolymarket =
+			this.currentStep !== null &&
+			this.steps[this.currentStep].showPolymarket
 		this.currentStep = stepIndex
 
 		const step = this.steps[stepIndex]
@@ -282,44 +285,75 @@ export default class DebateAftermathViz {
 		)
 		const pollsChart = this.container.select("#debate-polls-chart")
 
+		// If showPolymarket hasn't changed, update immediately
+		if (wasShowingPolymarket === step.showPolymarket) {
+			if (step.showPolymarket) {
+				this.pollingViz.updateVisualization(step)
+				this.polymarketViz.updateVisualization(step)
+			} else {
+				this.pollingViz.updateVisualization(step)
+			}
+			return
+		}
+
 		// First update container widths with transition
 		if (step.showPolymarket) {
-			// First make polymarket visible but with 0 width
-			polymarketChart
-				.style("display", "block")
-				.style("opacity", "1")
-				.style("width", "0")
+			// Add transition to polls chart - faster transition
+			pollsChart
+				.style("transition", "width 300ms ease")
+				.style("width", "50%")
 
-			// Force a reflow
-			polymarketChart.node().offsetHeight
-
-			// Then transition to 50% width
+			// Wait shorter time for transition to complete
 			setTimeout(() => {
-				pollsChart.style("width", "50%")
-				polymarketChart.style("width", "50%")
+				// Force layout recalculation
+				pollsChart.node().getBoundingClientRect()
 
-				// Update visualizations after width transition
+				// Update polling visualization with the new width
+				this.pollingViz.updateVisualization(step)
+
+				// Reduced delay before showing polymarket
 				setTimeout(() => {
-					this.pollingViz.updateVisualization(step)
-					this.polymarketViz.updateVisualization(step)
-				}, 500)
-			}, 50)
+					polymarketChart
+						.style("display", "block")
+						.style("opacity", "1")
+						.style("width", "0")
+						.style("transition", "width 300ms ease")
+
+					// Force a reflow
+					polymarketChart.node().offsetHeight
+
+					// Transition polymarket width
+					polymarketChart.style("width", "50%")
+
+					// Update polymarket after its transition
+					setTimeout(() => {
+						this.polymarketViz.updateVisualization(step)
+					}, 350)
+				}, 400) // Reduced delay
+			}, 350) // Reduced delay
 		} else {
-			// Transition back to full width polls
-			pollsChart.style("width", "100%")
+			// Reverse transition with same pattern
 			polymarketChart
+				.style("transition", "all 300ms ease")
 				.style("width", "0")
 				.style("opacity", "0")
-				.transition()
-				.duration(500)
-				.on("end", function () {
-					d3.select(this).style("display", "none")
-				})
 
-			// Update polling visualization after width transition
+			// Add transition to polls chart
+			pollsChart
+				.style("transition", "width 300ms ease")
+				.style("width", "100%")
+
+			// Wait for transitions to complete
 			setTimeout(() => {
+				// Hide polymarket
+				polymarketChart.style("display", "none")
+
+				// Force layout recalculation
+				pollsChart.node().getBoundingClientRect()
+
+				// Update polling visualization with the new width
 				this.pollingViz.updateVisualization(step)
-			}, 500)
+			}, 350)
 		}
 	}
 }

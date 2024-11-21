@@ -140,6 +140,14 @@ export default class PolymarketVisualization {
 			.attr("class", "x-axis")
 			.attr("transform", `translate(0,${this.height})`)
 			.call(d3.axisBottom(this.xScale))
+			.call(
+				d3.axisBottom(this.xScale).tickFormat(d3.timeFormat("%b")) // Use 3-letter month format
+			)
+			.selectAll("text")
+			.style("text-anchor", "end")
+			.attr("dx", "-.8em")
+			.attr("dy", ".15em")
+			.attr("transform", "rotate(-65)") // Rotate labels
 
 		this.svg
 			.append("g")
@@ -259,6 +267,14 @@ export default class PolymarketVisualization {
 			.select(".x-axis")
 			.transition(t)
 			.call(d3.axisBottom(this.xScale))
+			.call(
+				d3.axisBottom(this.xScale).tickFormat(d3.timeFormat("%b")) // Use 3-letter month format
+			)
+			.selectAll("text")
+			.style("text-anchor", "end")
+			.attr("dx", "-.8em")
+			.attr("dy", ".15em")
+			.attr("transform", "rotate(-65)") // Rotate labels
 
 		this.svg.select(".y-axis").transition(t).call(d3.axisLeft(this.yScale))
 

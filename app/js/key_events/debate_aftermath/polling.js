@@ -81,7 +81,12 @@ export default class PollingVisualization {
 		svg.append("g")
 			.attr("class", "x-axis")
 			.attr("transform", `translate(0,${height})`)
-			.call(d3.axisBottom(xScale))
+			.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%b")))
+			.selectAll("text")
+			.style("text-anchor", "end")
+			.attr("dx", "-.8em")
+			.attr("dy", ".15em")
+			.attr("transform", "rotate(-65)")
 
 		svg.append("g").attr("class", "y-axis").call(d3.axisLeft(yScale))
 
@@ -251,7 +256,12 @@ export default class PollingVisualization {
 		this.svg
 			.select(".x-axis")
 			.transition(t)
-			.call(d3.axisBottom(this.xScale))
+			.call(d3.axisBottom(this.xScale).tickFormat(d3.timeFormat("%b")))
+			.selectAll("text")
+			.style("text-anchor", "end")
+			.attr("dx", "-.8em")
+			.attr("dy", ".15em")
+			.attr("transform", "rotate(-65)")
 
 		this.svg.select(".y-axis").transition(t).call(d3.axisLeft(this.yScale))
 
