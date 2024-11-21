@@ -8,6 +8,7 @@ class DebateAftermathViz {
 				annotation: "Presidential polling trends throughout 2024",
 				yDomain: [30, 60],
 				showDebateLine: false,
+				showPolymarket: false,
 			},
 			{
 				xDomain: [new Date("2024-01-11"), new Date("2024-07-21")],
@@ -15,6 +16,7 @@ class DebateAftermathViz {
 					"Trump maintained a steady but small lead in early 2024 polling",
 				yDomain: [30, 60],
 				showDebateLine: false,
+				showPolymarket: false,
 			},
 			{
 				xDomain: [new Date("2024-01-11"), new Date("2024-07-21")],
@@ -22,6 +24,7 @@ class DebateAftermathViz {
 					"The first presidential debate between Biden and Trump was held on June 27th",
 				yDomain: [30, 60],
 				showDebateLine: true,
+				showPolymarket: false,
 			},
 			{
 				xDomain: [new Date("2024-06-23"), new Date("2024-07-20")],
@@ -29,6 +32,56 @@ class DebateAftermathViz {
 					"After a perceived poor performance in the debate, Biden's support declined while Trump's lead grew",
 				yDomain: [36, 46],
 				showDebateLine: true,
+				showPolymarket: false,
+			},
+			{
+				xDomain: [new Date("2024-06-23"), new Date("2024-07-20")],
+				annotation:
+					"Let's see how this compares to the Polymarket prediction market",
+				yDomain: [36, 46],
+				showDebateLine: true,
+				showPolymarket: true,
+				polymarketOpacity: 0,
+			},
+			{
+				xDomain: [new Date("2024-01-01"), new Date("2024-11-08")],
+				annotation:
+					"Polymarket prediction market trend throughout 2024",
+				yDomain: [30, 60],
+				showDebateLine: false,
+				showPolymarket: true,
+				polymarketOpacity: 1,
+				pollsOpacity: 0.2,
+			},
+			{
+				xDomain: [new Date("2024-01-11"), new Date("2024-07-21")],
+				annotation:
+					"Trump maintains a large and steady lead in prediction markets",
+				yDomain: [30, 60],
+				showDebateLine: false,
+				showPolymarket: true,
+				polymarketOpacity: 1,
+				pollsOpacity: 0.2,
+			},
+			{
+				xDomain: [new Date("2024-01-11"), new Date("2024-07-21")],
+				annotation:
+					"The first presidential debate between Biden and Trump was held on June 27th",
+				yDomain: [30, 60],
+				showDebateLine: true,
+				showPolymarket: true,
+				polymarketOpacity: 1,
+				pollsOpacity: 1,
+			},
+			{
+				xDomain: [new Date("2024-06-23"), new Date("2024-07-20")],
+				annotation:
+					"Biden's support crashes in both polls and prediction markets",
+				yDomain: [36, 46],
+				showDebateLine: true,
+				showPolymarket: true,
+				polymarketOpacity: 1,
+				pollsOpacity: 1,
 			},
 		]
 	}
@@ -91,7 +144,14 @@ class DebateAftermathViz {
 				.html(step.annotation)
 		})
 
+		// Initialize both visualizations
 		await this.createVisualization()
+		this.polymarketViz = new PolymarketVisualization(
+			"debate-polymarket-chart"
+		)
+		await this.polymarketViz.initialize()
+
+		// Initialize scroll handling
 		this.initializeScrollHandling()
 		this.initializeVizSectionObserver()
 	}
