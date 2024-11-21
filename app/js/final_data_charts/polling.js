@@ -1,4 +1,4 @@
-class PollsVisualization {
+export default class PollsVisualization {
 	constructor(containerId) {
 		this.containerId = containerId
 		this.margin = { top: 40, right: 30, bottom: 50, left: 60 }
