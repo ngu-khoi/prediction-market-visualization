@@ -11,6 +11,11 @@ async function loadModules() {
 			import("./key_events/debate_aftermath/debate_aftermath.js"),
 		])
 
+		// Add Electoral Map import
+		const { default: ElectoralMap } = await import(
+			"./electoral_map/electoralMap.js"
+		)
+
 		// Final visualizations (separate from debate aftermath)
 		const [
 			{ default: PollsVisualization },
@@ -27,6 +32,9 @@ async function loadModules() {
 			DebatePollingViz,
 			DebatePolymarketViz,
 			DebateAftermathViz,
+
+			// Electoral Map
+			ElectoralMap,
 
 			// Final visualizations (using actual class names)
 			PollsVisualization,
@@ -93,6 +101,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const modules = await loadModules()
 		console.log("Loaded modules:", modules)
 
+		// Initialize Electoral Map
+		const electoralMap = new modules.ElectoralMap()
+		await electoralMap.initialize()
+
 		// Initialize debate aftermath visualization
 		const debateViz = new modules.DebateAftermathViz({
 			PollingVisualization: modules.DebatePollingViz,
@@ -123,9 +135,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 			clearTimeout(resizeTimeout)
 			resizeTimeout = setTimeout(async () => {
 				d3.selectAll(
-					"#candlestick-chart svg, #kalshi-chart svg, #polymarket-chart svg"
+					"#candlestick-chart svg, #kalshi-chart svg, #polymarket-chart svg, #electoral-map-container svg"
 				).remove()
 
+				// Reinitialize Electoral Map
+				const newElectoralMap = new modules.ElectoralMap()
+				await newElectoralMap.initialize()
+
+				// Reinitialize debate aftermath visualization
 				const newDebateViz = new modules.DebateAftermathViz({
 					PollingVisualization: modules.DebatePollingViz,
 					PolymarketVisualization: modules.DebatePolymarketViz,

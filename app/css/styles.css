@@ -196,3 +196,21 @@ h2 {
 .step {
   border: none;
 }
+
+#electoral-map-container {
+  width: 100%;
+  min-height: 400px;
+  margin: 20px auto;
+}
+
+.state {
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+
+.tooltip {
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+  font-size: 14px;
+}

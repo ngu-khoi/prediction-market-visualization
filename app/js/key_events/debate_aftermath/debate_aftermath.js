@@ -84,7 +84,7 @@ export default class DebateAftermathViz {
 			{
 				xDomain: [new Date("2024-06-13"), new Date("2024-07-30")],
 				annotation:
-					"Biden's support crashes in both polls and prediction markets",
+					"Biden's support crashes in both polls and prediction markets; however, the Polymarket diverged by more than 40 cents compared to the polls divering by 2 percentage points",
 				yDomain: [36, 46],
 				showDebateLine: true,
 				showPolymarket: true,
