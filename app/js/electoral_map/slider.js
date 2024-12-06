@@ -15,12 +15,37 @@ export default class Slider {
 	generateDateRange(start, end) {
 		const dates = []
 		let currentDate = new Date(start)
+		const months = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		]
 
 		while (currentDate <= end) {
 			const day = String(currentDate.getDate()).padStart(2, "0")
-			const month = String(currentDate.getMonth() + 1).padStart(2, "0")
+			const month = months[currentDate.getMonth()]
 			const year = currentDate.getFullYear()
-			dates.push(`${month}-${day}-${year} 00:00`)
+			// Format for display: "March 29, 2024"
+			const displayDate = `${month} ${day}, ${year}`
+			// Keep the original format for data matching
+			const dataDate = `${String(currentDate.getMonth() + 1).padStart(
+				2,
+				"0"
+			)}-${day}-${year} 00:00`
+
+			dates.push({
+				display: displayDate,
+				data: dataDate,
+			})
 			currentDate.setDate(currentDate.getDate() + 1)
 		}
 
@@ -28,7 +53,7 @@ export default class Slider {
 	}
 
 	getCurrentDate() {
-		return this.dates[0]
+		return this.dates[0].data
 	}
 
 	initVis() {
@@ -40,13 +65,13 @@ export default class Slider {
 			.insert("div", ":first-child")
 			.attr("class", "slider-section")
 
-		// Add caption
+		// Update caption text
 		sliderSection
 			.append("h3")
-			.text("Election Odds by Date")
+			.text("Choose a date to see election odds for each state")
 			.style("margin-top", "0")
-			.style("margin-bottom", "15px")
-			.style("font-size", "18px")
+			.style("margin-bottom", "25px")
+			.style("font-size", "20px")
 			.style("font-weight", "bold")
 			.style("color", "#333")
 
@@ -67,14 +92,14 @@ export default class Slider {
 		this.dateLabel = this.sliderContainer
 			.append("div")
 			.attr("class", "date-label")
-			.text(this.dates[0])
+			.text(this.dates[0].display)
 
 		// Add slider event listener
 		this.slider.on("input", function () {
 			const dateIndex = parseInt(this.value)
 			const selectedDate = vis.dates[dateIndex]
-			vis.dateLabel.text(selectedDate)
-			vis.electoralMap.onDateChange(selectedDate)
+			vis.dateLabel.text(selectedDate.display)
+			vis.electoralMap.onDateChange(selectedDate.data)
 		})
 	}
 }
