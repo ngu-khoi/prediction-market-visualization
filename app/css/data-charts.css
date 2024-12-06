@@ -1,0 +1,72 @@
+/* Chart Containers */
+.visualizations-container {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.visualization-section {
+    width: 100%;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    pointer-events: all;
+}
+
+/* Chart Dimensions */
+#candlestick-chart,
+#kalshi-chart,
+#polymarket-chart {
+    width: 100%;
+    height: 400px;
+    margin: 20px 0;
+}
+
+.visualization-section svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Chart Elements */
+.line {
+    fill: none;
+    stroke-width: 2;
+}
+
+/* Axes and Grid */
+.x-axis path,
+.y-axis path,
+.x-axis line,
+.y-axis line {
+    stroke: #000;
+    stroke-width: 1px;
+}
+
+.x-axis text,
+.y-axis text {
+    font-size: 12px;
+    font-family: Arial;
+}
+
+.grid line {
+    stroke: #ddd;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid path {
+    stroke-width: 0;
+}
+
+/* Chart Caption */
+.caption {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    margin: 10px 0;
+}
