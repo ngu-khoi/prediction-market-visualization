@@ -1,9 +1,9 @@
 export default class ArbitrageVisualization {
 	constructor(containerId, { Graph, StackedGraph, ArbitrageSlider }) {
 		this.container = d3.select(`#${containerId}`)
-		this.margin = { top: 120, right: 50, bottom: 50, left: 60 }
+		this.margin = { top: 150, right: 50, bottom: 50, left: 60 }
 		this.width = null
-		this.height = 700 - this.margin.top - this.margin.bottom
+		this.height = 500 - this.margin.top - this.margin.bottom
 		this.data = null
 		this.slider = null
 		this.currentDate = null
@@ -26,23 +26,28 @@ export default class ArbitrageVisualization {
 			.attr("class", "arbitrage-section")
 			.style("margin-bottom", "40px")
 
-		// Create graphs container
-		const graphs = section
-			.append("div")
-			.style("display", "flex")
-			.style("justify-content", "space-between")
-			.style("margin-bottom", "20px")
-
-		// Create info and slider container
-		section
-			.append("div")
-			.attr("class", "arbitrage-info")
-			.style("margin", "20px 0")
-
+		// Create slider container first (moved above table)
 		section
 			.append("div")
 			.attr("class", "slider-container")
 			.style("width", "100%")
+			.style("margin-bottom", "20px")
+
+		// Create info section as table
+		section
+			.append("div")
+			.attr("class", "arbitrage-info")
+			.style("width", "100%")
+			.style("margin-bottom", "20px")
+			.style("background-color", "#f5f5f5")
+			.style("border-radius", "5px")
+			.style("padding", "15px")
+
+		// Create graphs container
+		const graphs = section
+			.append("div")
+			.style("display", "flex")
+			.style("gap", "20px")
 
 		// Create graphs
 		this.createSection(graphs)
@@ -102,7 +107,7 @@ export default class ArbitrageVisualization {
 			.node()
 			.getBoundingClientRect().width
 		const graphWidth =
-			(containerWidth - this.margin.left - this.margin.right * 3) / 2
+			(containerWidth - this.margin.left - this.margin.right * 2 - 20) / 2
 
 		// Create comparison graph on left with transformed KH Poly value
 		this.leftGraph = new this.Graph(
@@ -173,31 +178,46 @@ export default class ArbitrageVisualization {
 			.attr("x2", xScale(date))
 			.style("display", "block")
 
-		// Update info for section 1
+		// Update info section as a table
 		const info = this.container.select(".arbitrage-info")
 		if (!info.empty()) {
 			info.html(`
-				<div style="text-align: center; margin-bottom: 5px;">
-					<h4 style="margin: 0 0 5px 0">DJT Kalshi vs KH Polymarket - ${date.toLocaleDateString()}</h4>
-					<p style="margin: 2px 0">DJT on Kalshi: ${dateData.djt_kalshi.toFixed(2)}¢</p>
-					<p style="margin: 2px 0">KH on Polymarket: ${dateData.kh_poly.toFixed(2)}¢</p>
-					<p style="margin: 2px 0">Total Cost: ${(
-						dateData.djt_kalshi + dateData.kh_poly
-					).toFixed(2)}¢</p>
-					<p style="margin: 2px 0">Potential Profit: ${(
-						100 -
-						dateData.djt_kalshi -
-						dateData.kh_poly
-					).toFixed(2)}¢</p>
-					<p style="margin: 2px 0">Max Volume: ${Math.min(
-						dateData.volume_djt
-					).toLocaleString()} contracts</p>
-					<p style="margin: 2px 0">Max Profit: $${(
-						((100 - dateData.djt_kalshi - dateData.kh_poly) *
-							Math.min(dateData.volume_djt)) /
-						100
-					).toFixed(2)}</p>
-				</div>
+				<table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+					<tr style="border-bottom: 1px solid #ddd;">
+						<th style="width: 180px; padding: 8px; text-align: center;">Date & Time</th>
+						<th style="width: 110px; padding: 8px; text-align: center;">DJT on Kalshi</th>
+						<th style="width: 130px; padding: 8px; text-align: center;">KH on Polymarket</th>
+						<th style="width: 100px; padding: 8px; text-align: center;">Total Cost</th>
+						<th style="width: 120px; padding: 8px; text-align: center;">Potential Profit</th>
+						<th style="width: 120px; padding: 8px; text-align: center;">Max Volume</th>
+						<th style="width: 100px; padding: 8px; text-align: center;">Max Profit</th>
+					</tr>
+					<tr>
+						<td style="padding: 8px; text-align: center;">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</td>
+						<td style="padding: 8px; text-align: center;">${dateData.djt_kalshi.toFixed(
+							2
+						)}¢</td>
+						<td style="padding: 8px; text-align: center;">${dateData.kh_poly.toFixed(
+							2
+						)}¢</td>
+						<td style="padding: 8px; text-align: center;">${(
+							dateData.djt_kalshi + dateData.kh_poly
+						).toFixed(2)}¢</td>
+						<td style="padding: 8px; text-align: center;">${(
+							100 -
+							dateData.djt_kalshi -
+							dateData.kh_poly
+						).toFixed(2)}¢</td>
+						<td style="padding: 8px; text-align: center;">${Math.min(
+							dateData.volume_djt
+						).toLocaleString()}</td>
+						<td style="padding: 8px; text-align: center;">$${(
+							((100 - dateData.djt_kalshi - dateData.kh_poly) *
+								Math.min(dateData.volume_djt)) /
+							100
+						).toFixed(2)}</td>
+					</tr>
+				</table>
 			`)
 		}
 	}

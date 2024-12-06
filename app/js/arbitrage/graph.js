@@ -21,7 +21,7 @@ export default class Graph {
 			.style("flex", "1")
 			.append("svg")
 			.attr("width", width + this.margin.left + this.margin.right)
-			.attr("height", this.height + this.margin.top + this.margin.bottom)
+			.attr("height", 750)
 			.append("g")
 			.attr(
 				"transform",
@@ -31,9 +31,10 @@ export default class Graph {
 		// Add title
 		svg.append("text")
 			.attr("x", width / 2)
-			.attr("y", -100)
+			.attr("y", -130)
 			.attr("text-anchor", "middle")
 			.style("font-size", "14px")
+			.style("font-weight", "bold")
 			.text(title)
 
 		// Create scales
@@ -165,9 +166,9 @@ export default class Graph {
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr("transform", `translate(20, -80)`)
+			.attr("transform", `translate(20, -110)`)
 
-		// Add legend for lines
+		// Add lines legend first
 		legend
 			.append("line")
 			.attr("x1", 0)
@@ -198,21 +199,38 @@ export default class Graph {
 			.text(label2)
 			.style("font-size", "12px")
 
-		// Add profit opportunity with more spacing
+		// Add profit area legend
 		legend
 			.append("rect")
 			.attr("x", 0)
 			.attr("y", 50)
 			.attr("width", 20)
 			.attr("height", 20)
-			.attr("fill", "green")
-			.attr("opacity", 0.3)
+			.attr("fill", "#BED9B9")
+			.attr("opacity", 1)
 
 		legend
 			.append("text")
 			.attr("x", 25)
 			.attr("y", 65)
-			.text("Profit Opportunity")
+			.text("Profit Area")
+			.style("font-size", "12px")
+
+		// Add loss area legend
+		legend
+			.append("rect")
+			.attr("x", 0)
+			.attr("y", 75)
+			.attr("width", 20)
+			.attr("height", 20)
+			.attr("fill", "#FFBEBB")
+			.attr("opacity", 1)
+
+		legend
+			.append("text")
+			.attr("x", 25)
+			.attr("y", 90)
+			.text("Loss Area")
 			.style("font-size", "12px")
 
 		// Add vertical line for current date

@@ -21,19 +21,20 @@ export default class StackedGraph {
 			.style("flex", "1")
 			.append("svg")
 			.attr("width", width + this.margin.left + this.margin.right)
-			.attr("height", this.height + this.margin.top + this.margin.bottom)
+			.attr("height", 750)
 			.append("g")
 			.attr(
 				"transform",
 				`translate(${this.margin.left},${this.margin.top})`
 			)
 
-		// Add title
+		// Move title much higher
 		svg.append("text")
 			.attr("x", width / 2)
-			.attr("y", -100)
+			.attr("y", -130)
 			.attr("text-anchor", "middle")
 			.style("font-size", "14px")
+			.style("font-weight", "bold")
 			.text(title)
 
 		// Create scales
@@ -158,7 +159,7 @@ export default class StackedGraph {
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr("transform", `translate(20, -80)`)
+			.attr("transform", `translate(20, -110)`)
 
 		legend
 			.append("line")
@@ -172,7 +173,7 @@ export default class StackedGraph {
 			.append("text")
 			.attr("x", 25)
 			.attr("y", 5)
-			.text(label1)
+			.text("DJT on Kalshi Price")
 			.style("font-size", "12px")
 
 		legend
@@ -190,28 +191,11 @@ export default class StackedGraph {
 			.text("Complement of KH on Polymarket (DJT on Polymarket)")
 			.style("font-size", "12px")
 
-		// Add profit/loss opportunity legend
+		// Add profit area legend first
 		legend
 			.append("rect")
 			.attr("x", 0)
 			.attr("y", 50)
-			.attr("width", 20)
-			.attr("height", 20)
-			.attr("fill", "#FFBEBB")
-			.attr("opacity", 1)
-
-		legend
-			.append("text")
-			.attr("x", 25)
-			.attr("y", 65)
-			.text("Loss Area")
-			.style("font-size", "12px")
-
-		// Add green area legend
-		legend
-			.append("rect")
-			.attr("x", 0)
-			.attr("y", 75)
 			.attr("width", 20)
 			.attr("height", 20)
 			.attr("fill", "#BED9B9")
@@ -220,8 +204,25 @@ export default class StackedGraph {
 		legend
 			.append("text")
 			.attr("x", 25)
-			.attr("y", 90)
+			.attr("y", 65)
 			.text("Profit Area")
+			.style("font-size", "12px")
+
+		// Add loss area legend second
+		legend
+			.append("rect")
+			.attr("x", 0)
+			.attr("y", 75)
+			.attr("width", 20)
+			.attr("height", 20)
+			.attr("fill", "#FFBEBB")
+			.attr("opacity", 1)
+
+		legend
+			.append("text")
+			.attr("x", 25)
+			.attr("y", 90)
+			.text("Loss Area")
 			.style("font-size", "12px")
 
 		// Add vertical line for current date

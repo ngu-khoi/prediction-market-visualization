@@ -10,6 +10,12 @@ export default class ArbitrageSlider {
 		const sliderContainer = this.container.select(".slider-container")
 		const dates = this.data.map((d) => d.date)
 
+		sliderContainer
+			.append("div")
+			.style("text-align", "center")
+			.style("margin-bottom", "10px")
+			.text("Move slider to choose date and time!")
+
 		this.slider = sliderContainer
 			.append("input")
 			.attr("type", "range")
