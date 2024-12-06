@@ -8,7 +8,7 @@ async function loadModules() {
 		] = await Promise.all([
 			import("./key_events/debate_aftermath/polling.js"),
 			import("./key_events/debate_aftermath/polymarket.js"),
-			import("./key_events/debate_aftermath/debate_aftermath.js"),
+			import("./key_events/debate_aftermath/debateAftermath.js"),
 		])
 
 		// Add Electoral Map import
@@ -41,8 +41,8 @@ async function loadModules() {
 		] = await Promise.all([
 			import("./arbitrage/arbitrage.js"),
 			import("./arbitrage/graph.js"),
-			import("./arbitrage/stacked_graph.js"),
-			import("./arbitrage/arbitrage_slider.js"),
+			import("./arbitrage/stackedGraph.js"),
+			import("./arbitrage/arbitrageSlider.js"),
 		])
 
 		return {
