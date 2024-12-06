@@ -33,10 +33,15 @@ async function loadModules() {
 			import("./final_data_charts/kalshi.js"),
 		])
 
+		const [{ default: ArbitrageVisualization }] = await Promise.all([
+			import("./arbitrage/arbitrage.js"),
+		])
+
 		return {
 			// Debate aftermath and its components
 			DebatePollingViz,
 			DebatePolymarketViz,
+
 			DebateAftermathViz,
 
 			// Electoral Map
@@ -48,6 +53,7 @@ async function loadModules() {
 			PollsVisualization,
 			PolymarketVisualization,
 			KalshiVisualization,
+			ArbitrageVisualization,
 		}
 	} catch (error) {
 		console.error("Error loading modules:", error)
@@ -140,6 +146,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 			console.error("Error initializing final visualizations:", error)
 		})
 
+		const arbitrageViz = new modules.ArbitrageVisualization(
+			"arbitrage-chart"
+		)
+		await arbitrageViz.initialize()
+
 		// Add resize handler
 		let resizeTimeout
 		window.addEventListener("resize", () => {
@@ -147,7 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			resizeTimeout = setTimeout(async () => {
 				// Remove all SVGs and slider sections
 				d3.selectAll(
-					"#candlestick-chart svg, #kalshi-chart svg, #polymarket-chart svg, #electoral-map-container svg, .slider-section"
+					"#candlestick-chart svg, #kalshi-chart svg, #polymarket-chart svg, #electoral-map-container svg, .slider-section, #arbitrage-chart svg"
 				).remove()
 
 				// Reinitialize Electoral Map
@@ -184,6 +195,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 						error
 					)
 				})
+
+				const newArbitrageViz = new modules.ArbitrageVisualization(
+					"arbitrage-chart"
+				)
+				await newArbitrageViz.initialize()
 			}, 250)
 		})
 	} catch (error) {
