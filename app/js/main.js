@@ -145,8 +145,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 		window.addEventListener("resize", () => {
 			clearTimeout(resizeTimeout)
 			resizeTimeout = setTimeout(async () => {
+				// Remove all SVGs and slider sections
 				d3.selectAll(
-					"#candlestick-chart svg, #kalshi-chart svg, #polymarket-chart svg, #electoral-map-container svg"
+					"#candlestick-chart svg, #kalshi-chart svg, #polymarket-chart svg, #electoral-map-container svg, .slider-section"
 				).remove()
 
 				// Reinitialize Electoral Map

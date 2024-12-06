@@ -85,7 +85,7 @@ export default class MapVis {
 			.append("div")
 			.attr("class", "map-container")
 			.style("position", "relative")
-			.style("min-height", "450px")
+			.style("min-height", "600px")
 
 		// Set dimensions
 		vis.width =
@@ -93,7 +93,7 @@ export default class MapVis {
 				.width -
 			vis.margin.left -
 			vis.margin.right
-		vis.height = 400 - vis.margin.top - vis.margin.bottom
+		vis.height = 600 - vis.margin.top - vis.margin.bottom
 
 		// Create SVG
 		vis.svg = d3

@@ -216,35 +216,37 @@ h2 {
 }
 
 .slider-section {
-    margin-bottom: 20px;
+    margin: 20px auto;
     background-color: #f8f9fa;
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 90%;
 }
 
 .slider-container {
     width: 100%;
-    padding: 0;
-    margin: 0;
+    padding: 0 20px;
+    margin: 20px 0;
 }
 
 /* Slider styling */
 input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
-    height: 8px;
+    height: 10px;
     border-radius: 4px;
     background: #ddd;
     outline: none;
-    margin: 10px 0;
+    margin: 15px 0;
 }
 
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     background: #007bff;
     cursor: pointer;
@@ -253,8 +255,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     background: #007bff;
     cursor: pointer;
@@ -263,11 +265,11 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .date-label {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     color: #333;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .trend-indicator {
