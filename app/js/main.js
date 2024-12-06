@@ -33,8 +33,16 @@ async function loadModules() {
 			import("./final_data_charts/kalshi.js"),
 		])
 
-		const [{ default: ArbitrageVisualization }] = await Promise.all([
+		const [
+			{ default: ArbitrageVisualization },
+			{ default: Graph },
+			{ default: StackedGraph },
+			{ default: ArbitrageSlider },
+		] = await Promise.all([
 			import("./arbitrage/arbitrage.js"),
+			import("./arbitrage/graph.js"),
+			import("./arbitrage/stacked_graph.js"),
+			import("./arbitrage/arbitrage_slider.js"),
 		])
 
 		return {
@@ -54,6 +62,9 @@ async function loadModules() {
 			PolymarketVisualization,
 			KalshiVisualization,
 			ArbitrageVisualization,
+			Graph,
+			StackedGraph,
+			ArbitrageSlider,
 		}
 	} catch (error) {
 		console.error("Error loading modules:", error)
