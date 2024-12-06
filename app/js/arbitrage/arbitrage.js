@@ -1,9 +1,9 @@
 export default class ArbitrageVisualization {
 	constructor(containerId) {
 		this.container = d3.select(`#${containerId}`)
-		this.margin = { top: 80, right: 50, bottom: 50, left: 60 }
+		this.margin = { top: 120, right: 50, bottom: 50, left: 60 }
 		this.width = null
-		this.height = 400 - this.margin.top - this.margin.bottom
+		this.height = 700 - this.margin.top - this.margin.bottom
 		this.data = null
 		this.slider = null
 		this.currentDate = null
@@ -152,7 +152,7 @@ export default class ArbitrageVisualization {
 		// Add title
 		svg.append("text")
 			.attr("x", width / 2)
-			.attr("y", -60)
+			.attr("y", -100)
 			.attr("text-anchor", "middle")
 			.style("font-size", "14px")
 			.text(title)
@@ -270,7 +270,7 @@ export default class ArbitrageVisualization {
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr("transform", `translate(20, -70)`)
+			.attr("transform", `translate(20, -80)`)
 
 		// Add legend for lines
 		legend
@@ -359,7 +359,7 @@ export default class ArbitrageVisualization {
 		// Add title
 		svg.append("text")
 			.attr("x", width / 2)
-			.attr("y", -60)
+			.attr("y", -100)
 			.attr("text-anchor", "middle")
 			.style("font-size", "14px")
 			.text(title)
@@ -461,7 +461,7 @@ export default class ArbitrageVisualization {
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr("transform", `translate(20, -70)`)
+			.attr("transform", `translate(20, -80)`)
 
 		legend
 			.append("line")
