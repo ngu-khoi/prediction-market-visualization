@@ -57,24 +57,55 @@ export default class ArbitrageVisualization {
 
 	async loadData() {
 		try {
-			const [djtData, khData, polymarketData] = await Promise.all([
-				d3.csv("data/kalshi/PRES-2024-DJT_candlesticks.csv"),
-				d3.csv("data/kalshi/PRES-2024-KH_candlesticks.csv"),
-				d3.csv("data/polymarket/polymarket-price-data-daily.csv"),
-			])
+			const [djtData, khData, polymarketDailyData, polymarketHourlyData] =
+				await Promise.all([
+					d3.csv("data/kalshi/PRES-2024-DJT_candlesticks.csv"),
+					d3.csv("data/kalshi/PRES-2024-KH_candlesticks.csv"),
+					d3.csv("data/polymarket/polymarket-price-data-daily.csv"),
+					d3.csv("data/polymarket/polymarket-price-data-hourly.csv"),
+				])
 
 			// Process and merge data
 			this.data = djtData
 				.map((djt) => {
 					const date = new Date(djt.timestamp)
 					const dateStr = date.toISOString().split("T")[0]
+					const timeStr = date
+						.toISOString()
+						.split("T")[1]
+						.split(".")[0]
 
 					const khMatch = khData.find(
 						(k) => k.timestamp === djt.timestamp
 					)
-					const polyMatch = polymarketData.find((p) =>
-						p["Date (UTC)"].startsWith(dateStr.slice(5))
-					)
+
+					// Try to find hourly match first, fall back to daily if not found
+					const polyHourlyMatch = polymarketHourlyData.find((p) => {
+						// Convert Kalshi date to MM-DD-YYYY format
+						const kalshiMonth = dateStr.slice(5, 7)
+						const kalshiDay = dateStr.slice(8, 10)
+						const kalshiYear = dateStr.slice(0, 4)
+						const formattedKalshiDate = `${kalshiMonth}-${kalshiDay}-${kalshiYear}`
+
+						// Convert Kalshi time to HH:00 format
+						const kalshiHour = timeStr.slice(0, 2)
+						const formattedKalshiTime = `${kalshiHour}:00`
+
+						return (
+							p["Date (UTC)"] ===
+							`${formattedKalshiDate} ${formattedKalshiTime}`
+						)
+					})
+
+					const polyDailyMatch = polymarketDailyData.find((p) => {
+						const kalshiMonth = dateStr.slice(5, 7)
+						const kalshiDay = dateStr.slice(8, 10)
+						return p["Date (UTC)"].startsWith(
+							`${kalshiMonth}-${kalshiDay}`
+						)
+					})
+
+					const polyMatch = polyHourlyMatch || polyDailyMatch
 
 					return {
 						date: date,
@@ -166,7 +197,7 @@ export default class ArbitrageVisualization {
 			.node()
 			.getBoundingClientRect().width
 		const graphWidth =
-			(containerWidth - this.margin.left - this.margin.right * 3) / 2
+			(containerWidth - this.margin.left - this.margin.right * 2 - 20) / 2
 		const xScale = d3
 			.scaleTime()
 			.domain(d3.extent(this.data, (d) => d.date))
