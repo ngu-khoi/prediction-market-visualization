@@ -58,6 +58,7 @@ export default class Slider {
 
 	initVis() {
 		let vis = this
+		vis.isPlaying = false // Add state for play/pause
 
 		// Create a separate container for the slider section
 		const sliderSection = d3
@@ -75,13 +76,44 @@ export default class Slider {
 			.style("font-weight", "bold")
 			.style("color", "#333")
 
-		// Create slider container
-		this.sliderContainer = sliderSection
+		// Create slider container with controls
+		const controlsContainer = sliderSection
 			.append("div")
-			.attr("class", "slider-container")
+			.attr("class", "controls-container")
+
+		// Create play button
+		this.playButton = controlsContainer
+			.append("button")
+			.attr("class", "play-button")
+			.html('<i class="fas fa-play"></i>')
+			.on("click", function () {
+				if (vis.isPlaying) {
+					// Pause
+					vis.isPlaying = false
+					clearInterval(vis.playInterval)
+					d3.select(this).html('<i class="fas fa-play"></i>')
+				} else {
+					// Play
+					vis.isPlaying = true
+					d3.select(this).html('<i class="fas fa-pause"></i>')
+					vis.playInterval = setInterval(() => {
+						let currentValue = parseInt(
+							vis.slider.property("value")
+						)
+						if (currentValue >= vis.dates.length - 1) {
+							// Reset to start when reaching the end
+							currentValue = -1
+						}
+						vis.slider.property("value", currentValue + 1)
+						const selectedDate = vis.dates[currentValue + 1]
+						vis.dateLabel.text(selectedDate.display)
+						vis.electoralMap.onDateChange(selectedDate.data)
+					}, 100) // Update every 0.1 seconds
+				}
+			})
 
 		// Create slider
-		this.slider = this.sliderContainer
+		this.slider = controlsContainer
 			.append("input")
 			.attr("type", "range")
 			.attr("min", 0)
@@ -89,7 +121,7 @@ export default class Slider {
 			.attr("value", 0)
 
 		// Add date display
-		this.dateLabel = this.sliderContainer
+		this.dateLabel = controlsContainer
 			.append("div")
 			.attr("class", "date-label")
 			.text(this.dates[0].display)
