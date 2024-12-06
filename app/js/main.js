@@ -57,14 +57,16 @@ async function loadModules() {
 			MapVis,
 			Slider,
 
-			// Final visualizations (using actual class names)
-			PollsVisualization,
-			PolymarketVisualization,
-			KalshiVisualization,
+			// Arbitrage
 			ArbitrageVisualization,
 			Graph,
 			StackedGraph,
 			ArbitrageSlider,
+
+			// Final visualizations (using actual class names)
+			PollsVisualization,
+			PolymarketVisualization,
+			KalshiVisualization,
 		}
 	} catch (error) {
 		console.error("Error loading modules:", error)
@@ -158,7 +160,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 		})
 
 		const arbitrageViz = new modules.ArbitrageVisualization(
-			"arbitrage-chart"
+			"arbitrage-chart",
+			{
+				Graph: modules.Graph,
+				StackedGraph: modules.StackedGraph,
+				ArbitrageSlider: modules.ArbitrageSlider,
+			}
 		)
 		await arbitrageViz.initialize()
 
@@ -208,7 +215,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 				})
 
 				const newArbitrageViz = new modules.ArbitrageVisualization(
-					"arbitrage-chart"
+					"arbitrage-chart",
+					{
+						Graph: modules.Graph,
+						StackedGraph: modules.StackedGraph,
+						ArbitrageSlider: modules.ArbitrageSlider,
+					}
 				)
 				await newArbitrageViz.initialize()
 			}, 250)

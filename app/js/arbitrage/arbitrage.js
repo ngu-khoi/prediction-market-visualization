@@ -1,5 +1,5 @@
 export default class ArbitrageVisualization {
-	constructor(containerId) {
+	constructor(containerId, { Graph, StackedGraph, ArbitrageSlider }) {
 		this.container = d3.select(`#${containerId}`)
 		this.margin = { top: 120, right: 50, bottom: 50, left: 60 }
 		this.width = null
@@ -7,6 +7,9 @@ export default class ArbitrageVisualization {
 		this.data = null
 		this.slider = null
 		this.currentDate = null
+		this.Graph = Graph
+		this.StackedGraph = StackedGraph
+		this.ArbitrageSlider = ArbitrageSlider
 	}
 
 	async initialize() {
