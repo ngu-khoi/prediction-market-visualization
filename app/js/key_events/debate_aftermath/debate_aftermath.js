@@ -84,7 +84,27 @@ export default class DebateAftermathViz {
 			{
 				xDomain: [new Date("2024-06-13"), new Date("2024-07-30")],
 				annotation:
-					"Biden's support crashes in both polls and prediction markets; however, the Polymarket diverged by more than 40 cents compared to the polls divering by 2 percentage points",
+					"Biden's support crashes in both polls and prediction markets immediately after the debate",
+				yDomain: [36, 46],
+				showDebateLine: true,
+				showPolymarket: true,
+				polymarketOpacity: 1,
+				pollsOpacity: 1,
+			},
+			{
+				xDomain: [new Date("2024-06-13"), new Date("2024-07-30")],
+				annotation:
+					"While polls show only a 2-point decline for Biden, Polymarket prices drop by over 40 cents.",
+				yDomain: [36, 46],
+				showDebateLine: true,
+				showPolymarket: true,
+				polymarketOpacity: 1,
+				pollsOpacity: 1,
+			},
+			{
+				xDomain: [new Date("2024-06-13"), new Date("2024-07-30")],
+				annotation:
+					"Notice how Harris's chances begin to rise as Biden's decline. Early predictions that Kamala Harris would take over turn out to be correct.",
 				yDomain: [36, 46],
 				showDebateLine: true,
 				showPolymarket: true,
@@ -109,7 +129,7 @@ export default class DebateAftermathViz {
 			.style("background", "white")
 			.style("z-index", "1")
 
-		// Add annotation card container
+		// Add annotation card container with initial opacity of 1
 		const annotationCard = vizContainer
 			.append("div")
 			.attr("class", "annotation-card")
@@ -123,10 +143,11 @@ export default class DebateAftermathViz {
 			.style("left", "50%")
 			.style("top", "50px")
 			.style("transform", "translateX(-50%)")
-			.style("opacity", "0")
-			.style("transition", "opacity 0.5s ease")
+			.style("opacity", "1") // Set initial opacity to 1
+			.style("transition", "opacity 300ms ease")
 			.style("z-index", "1000")
 			.style("pointer-events", "none")
+			.html(this.steps[0].annotation) // Set initial annotation text
 
 		// Add charts container with flexbox
 		const chartsContainer = vizContainer
@@ -195,15 +216,21 @@ export default class DebateAftermathViz {
 				const card = this.container.select(".annotation-card")
 
 				entries.forEach((entry) => {
-					if (!entry.isIntersecting) {
+					if (entry.isIntersecting) {
+						// Show first annotation when section comes into view
+						card.html(this.steps[0].annotation).style(
+							"opacity",
+							"1"
+						)
+					} else {
 						// Hide card when outside visualization section
 						card.style("opacity", "0")
 					}
 				})
 			},
 			{
-				threshold: 0,
-				rootMargin: "-1px 0px -1px 0px", // Trigger exactly at section boundaries
+				threshold: 0.1, // Trigger earlier
+				rootMargin: "0px 0px -25% 0px", // Adjust rootMargin to trigger sooner
 			}
 		)
 
@@ -238,22 +265,16 @@ export default class DebateAftermathViz {
 							containerRect.top >= 0 &&
 							containerRect.bottom <= window.innerHeight
 
-						// Only show card if we're in the visualization section
+						// Only update visualization if we're in the visualization section
 						if (isContainerVisible) {
 							this.updateVisualization(stepIndex)
 
 							const card =
 								this.container.select(".annotation-card")
-							card.transition()
-								.duration(300)
-								.style("opacity", "0")
-								.end()
-								.then(() => {
-									card.html(this.steps[stepIndex].annotation)
-										.transition()
-										.duration(300)
-										.style("opacity", "1")
-								})
+							// Remove the initial fade-in transition for smoother updates
+							card.style("transition", "opacity 300ms ease")
+								.html(this.steps[stepIndex].annotation)
+								.style("opacity", "1")
 						}
 					}
 				})
