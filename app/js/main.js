@@ -12,9 +12,15 @@ async function loadModules() {
 		])
 
 		// Add Electoral Map import
-		const { default: ElectoralMap } = await import(
-			"./electoral_map/electoralMap.js"
-		)
+		const [
+			{ default: ElectoralMap },
+			{ default: MapVis },
+			{ default: Slider },
+		] = await Promise.all([
+			import("./electoral_map/electoralMap.js"),
+			import("./electoral_map/mapVis.js"),
+			import("./electoral_map/slider.js"),
+		])
 
 		// Final visualizations (separate from debate aftermath)
 		const [
@@ -35,6 +41,8 @@ async function loadModules() {
 
 			// Electoral Map
 			ElectoralMap,
+			MapVis,
+			Slider,
 
 			// Final visualizations (using actual class names)
 			PollsVisualization,
@@ -101,8 +109,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const modules = await loadModules()
 		console.log("Loaded modules:", modules)
 
-		// Initialize Electoral Map
-		const electoralMap = new modules.ElectoralMap()
+		// Initialize Electoral Map with required modules
+		const electoralMap = new modules.ElectoralMap({
+			MapVis: modules.MapVis,
+			Slider: modules.Slider,
+		})
 		await electoralMap.initialize()
 
 		// Initialize debate aftermath visualization
@@ -139,7 +150,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 				).remove()
 
 				// Reinitialize Electoral Map
-				const newElectoralMap = new modules.ElectoralMap()
+				const newElectoralMap = new modules.ElectoralMap({
+					MapVis: modules.MapVis,
+					Slider: modules.Slider,
+				})
 				await newElectoralMap.initialize()
 
 				// Reinitialize debate aftermath visualization
