@@ -93,8 +93,8 @@ export default class StackedGraph {
 		svg.append("path")
 			.datum(this.data)
 			.attr("class", "blue-area")
-			.attr("fill", "blue")
-			.attr("opacity", 0.3)
+			.attr("fill", "#B3C6E7")
+			.attr("opacity", 1)
 			.attr("d", blueArea)
 
 		// Add base line

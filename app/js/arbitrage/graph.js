@@ -44,12 +44,27 @@ export default class Graph {
 
 		const yScale = d3.scaleLinear().domain(yDomain).range([this.height, 0])
 
-		// First draw the profit area (green, below Poly KH)
-		const profitArea = d3
+		// First draw white area below the lower line
+		const whiteArea = d3
 			.area()
 			.x((d) => xScale(d.date))
 			.y0((d) => yScale(0))
-			.y1((d) => yScale(price2Accessor(d)))
+			.y1((d) => yScale(Math.min(price1Accessor(d), price2Accessor(d))))
+
+		svg.append("path")
+			.datum(this.data)
+			.attr("class", "white-area")
+			.attr("fill", "white")
+			.attr("opacity", 1)
+			.attr("d", whiteArea)
+
+		// Draw green area between lines when DJT on Polymarket (complement) is higher
+		const profitArea = d3
+			.area()
+			.x((d) => xScale(d.date))
+			.y0((d) => yScale(Math.min(price1Accessor(d), price2Accessor(d))))
+			.y1((d) => yScale(Math.max(price1Accessor(d), price2Accessor(d))))
+			.defined((d) => price2Accessor(d) > price1Accessor(d)) // When complement is higher
 
 		svg.append("path")
 			.datum(this.data)
@@ -58,12 +73,13 @@ export default class Graph {
 			.attr("opacity", 1)
 			.attr("d", profitArea)
 
-		// Then draw the loss area (red, below DJT Kalshi)
+		// Draw red area between lines when DJT on Kalshi is higher
 		const lossArea = d3
 			.area()
 			.x((d) => xScale(d.date))
-			.y0((d) => yScale(0))
-			.y1((d) => yScale(price1Accessor(d)))
+			.y0((d) => yScale(Math.min(price1Accessor(d), price2Accessor(d))))
+			.y1((d) => yScale(Math.max(price1Accessor(d), price2Accessor(d))))
+			.defined((d) => price1Accessor(d) > price2Accessor(d)) // When DJT Kalshi is higher
 
 		svg.append("path")
 			.datum(this.data)
