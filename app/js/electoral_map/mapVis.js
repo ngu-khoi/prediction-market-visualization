@@ -301,4 +301,29 @@ export default class MapVis {
 				}.bind(this)
 			)
 	}
+
+	updateTooltip(d, element) {
+		let vis = this
+		const stateData = vis.getStateData(d, vis.currentDate)
+
+		// Get mouse position
+		const [mouseX, mouseY] = d3.pointer(element, vis.container.node())
+
+		// Format percentages with proper % symbol
+		const trumpPct = stateData
+			? `${(stateData.trump * 100).toFixed(1)}%`
+			: "N/A"
+		const harrisPct = stateData
+			? `${(stateData.harris * 100).toFixed(1)}%`
+			: "N/A"
+
+		vis.tooltip
+			.style("left", `${mouseX + 10}px`)
+			.style("top", `${mouseY + 10}px`).html(`
+				<h4>${d.properties.name}</h4>
+				<p>Electoral Votes: ${vis.electoralVotes[d.properties.postal]}</p>
+				<p>Trump: ${trumpPct}</p>
+				<p>Harris: ${harrisPct}</p>
+			`)
+	}
 }
