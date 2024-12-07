@@ -149,6 +149,27 @@ export default class DebateAftermathViz {
 			.style("pointer-events", "none")
 			.html(this.steps[0].annotation) // Set initial annotation text
 
+		const progressBar = vizContainer
+			.append("div")
+			.attr("class", "step-progress-bar")
+			.style("position", "absolute")
+			.style("left", "50%")
+			.style("top", "40px") // Position it just above the annotation card
+			.style("transform", "translateX(-50%)")
+			.style("width", "100px")
+			.style("height", "4px")
+			.style("background", "#eee")
+			.style("border-radius", "2px")
+			.style("overflow", "hidden")
+
+		this.progressFill = progressBar
+			.append("div")
+			.attr("class", "progress-fill")
+			.style("width", "0%")
+			.style("height", "100%")
+			.style("background", "#007bff")
+			.style("transition", "width 0.1s ease")
+
 		// Add charts container with flexbox
 		const chartsContainer = vizContainer
 			.append("div")
@@ -246,12 +267,27 @@ export default class DebateAftermathViz {
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
+					// Only calculate progress when element is entering viewport
+					const stepProgress =
+						entry.boundingClientRect.y > 0
+							? entry.intersectionRatio
+							: entry.intersectionRatio < 0.1
+							? 0
+							: 1
+
+					// Update progress bar
+					if (entry.isIntersecting) {
+						this.progressFill.style(
+							"width",
+							`${stepProgress * 100}%`
+						)
+					}
+
 					const step = entry.target
 					const stepIndex = Array.from(
 						this.container.node().querySelectorAll(".debate-step")
 					).indexOf(step)
 
-					// Only proceed if we're intersecting and it's a new step
 					if (entry.isIntersecting && stepIndex !== lastActiveIndex) {
 						lastActiveIndex = stepIndex
 
@@ -281,7 +317,7 @@ export default class DebateAftermathViz {
 			},
 			{
 				root: null,
-				threshold: 0.35,
+				threshold: Array.from({ length: 101 }, (_, i) => i / 100),
 				rootMargin: "-25% 0px",
 			}
 		)
