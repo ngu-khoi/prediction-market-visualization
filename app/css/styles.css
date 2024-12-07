@@ -21,6 +21,23 @@ h2 {
   color: #333;
 }
 
+/* Paragraph styles */
+.step-content p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #2c3e50;
+  margin: 1.2em auto;
+  max-width: 800px;
+}
+
+/* Keep existing ticket-details paragraphs compact */
+.ticket-details p {
+  font-size: 0.9em;
+  line-height: 1.4;
+  margin: 0.5em 0;
+  max-width: none;
+}
+
 /* Progress Indicator */
 #scroll-progress {
   position: fixed;
@@ -92,4 +109,102 @@ h2 {
   max-width: 200px;
   white-space: nowrap;
   z-index: 1000;
+}
+
+/* Candidate Cards */
+.candidate-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.ticket-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.candidate-photos {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+/* Photo styles for each ticket */
+.ticket-dem .candidate-photo {
+    border: 3px solid #0066cc;  /* Democratic blue */
+}
+
+.ticket-dem .candidate-photo.vp {
+    border: 3px solid #3399ff;  /* Lighter Democratic blue */
+}
+
+.ticket-rep .candidate-photo {
+    border: 3px solid #cc0000;  /* Republican red */
+}
+
+.ticket-rep .candidate-photo.vp {
+    border: 3px solid #ff3333;  /* Lighter Republican red */
+}
+
+.ticket-ind .candidate-photo {
+    border: 3px solid #4a4a4a;  /* Independent gray */
+}
+
+.ticket-ind .candidate-photo.vp {
+    border: 3px solid #6c757d;  /* Lighter gray */
+}
+
+.candidate-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ticket-info {
+    text-align: center;
+}
+
+.ticket-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.ticket-party {
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding: 4px 12px;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+.ticket-dem .ticket-party {
+    background-color: #e6f0ff;  /* Light blue background */
+    color: #0066cc;
+}
+
+.ticket-rep .ticket-party {
+    background-color: #ffe6e6;  /* Light red background */
+    color: #cc0000;
+}
+
+.ticket-ind .ticket-party {
+    background-color: #f0f0f0;  /* Light gray background */
+    color: #4a4a4a;
+}
+
+.ticket-details {
+    font-size: 0.9em;
+    color: #495057;
+    line-height: 1.4;
 }

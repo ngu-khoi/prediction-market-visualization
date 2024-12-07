@@ -1,7 +1,7 @@
 /* Slider Section */
 .slider-section {
-    margin: 20px auto;
-    padding: 20px;
+    margin: 10px auto;
+    padding: 10px;
     max-width: 800px;
     background-color: #f8f9fa;
     border-radius: 12px;
@@ -9,8 +9,8 @@
 }
 
 .slider-container {
-    padding: 0 20px;
-    margin: 15px 0;
+    padding: 0 10px;
+    margin: 8px 0;
     width: 100%;
 }
 
@@ -19,10 +19,10 @@
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto;
-    gap: 10px 15px;
+    gap: 5px 10px;
     width: 100%;
     padding: 0;
-    margin: 15px 0;
+    margin: 8px 0;
     align-items: center;
 }
 
@@ -105,9 +105,9 @@ input[type="range"]::-moz-range-thumb {
 /* Slider Section Title */
 .slider-section h3 {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 18px;
-    line-height: 1.4;
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.3;
     color: #2c3e50;
     font-weight: 600;
 }

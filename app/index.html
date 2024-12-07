@@ -30,7 +30,7 @@
         <!-- Title Section -->
         <section class="step" data-step="title">
             <div class="step-content">
-                <h1>2024 Presidential Election Analysis</h1>
+                <h1>2024 Presidential Election Polling and Prediction Markets</h1>
                 <div class="authors">
                     <h4>By Matt Mansour, Brett Kim, Raunak Daga, and Khoi Nguyen</h4>
                     <p class="author-info">CS1710 Final Project @ Harvard University <p>
@@ -42,20 +42,73 @@
         <section class="step" data-step="intro">
             <div class="step-content">
                 <h2>Introduction</h2>
-                <p>Here are the results of the 2024 presidential election.</p>
-                <p>The outcome surprised many observers, as polls had consistently shown Vice President Kamala Harris leading in the months before election day.</p>
+                <p>Here are the results of the 2024 presidential election, a historic race that took an unexpected turn when incumbent President Joe Biden withdrew from the race in March 2024, citing health concerns. Vice President Kamala Harris stepped in as the Democratic nominee, choosing Minnesota Governor Tim Walz as her running mate.</p>
+                
+                <div class="candidate-cards">
+                    <!-- Biden-Harris Ticket (Pre-March 2024) -->
+                    <div class="ticket-card ticket-dem">
+                        <div class="candidate-photos">
+                            <img src="images/candidates/biden.jpg" alt="Joe Biden" class="candidate-photo">
+                            <img src="images/candidates/harris.jpg" alt="Kamala Harris" class="candidate-photo vp">
+                        </div>
+                        <div class="ticket-info">
+                            <div class="ticket-name">Biden/Harris</div>
+                            <div class="ticket-party">Democratic Party</div>
+                            <div class="ticket-details">
+                                <p>Joe Biden (81)<br>President (Withdrew March 2024)</p>
+                                <p>Kamala Harris (59)<br>Vice President</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Harris-Walz Ticket -->
+                    <div class="ticket-card ticket-dem">
+                        <div class="candidate-photos">
+                            <img src="images/candidates/harris.jpg" alt="Kamala Harris" class="candidate-photo">
+                            <img src="images/candidates/walz.jpg" alt="Tim Walz" class="candidate-photo vp">
+                        </div>
+                        <div class="ticket-info">
+                            <div class="ticket-name">Harris/Walz</div>
+                            <div class="ticket-party">Democratic Party</div>
+                            <div class="ticket-details">
+                                <p>Kamala Harris (59)<br>Former Vice President</p>
+                                <p>Tim Walz (60)<br>Governor of Minnesota</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trump-Vance Ticket -->
+                    <div class="ticket-card ticket-rep">
+                        <div class="candidate-photos">
+                            <img src="images/candidates/trump.jpg" alt="Donald Trump" class="candidate-photo">
+                            <img src="images/candidates/vance.jpg" alt="JD Vance" class="candidate-photo vp">
+                        </div>
+                        <div class="ticket-info">
+                            <div class="ticket-name">Trump/Vance</div>
+                            <div class="ticket-party">Republican Party</div>
+                            <div class="ticket-details">
+                                <p>Donald Trump (77)<br>Former President</p>
+                                <p>JD Vance (49)<br>Senator from Ohio</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>The outcome surprised many observers, as polls had consistently shown Vice President Harris leading in the months before election day, with her message of generational change resonating strongly with voters.</p>
                 <p>But should we really be surprised?</p>
+                <p>The dramatic shift in Democratic leadership mid-campaign created an unprecedented scenario that traditional polls struggled to capture accurately.</p>
                 <p>We're going to examine prediction markets alongside traditional polling data to see how they reacted to key events throughout the campaign.</p>
-                <p>This analysis will help us understand whether prediction markets may be better indicators of election outcomes compared to traditional polls.</p>
+                <p>This analysis will help us understand whether prediction markets may be better indicators of election outcomes compared to traditional polls, especially in scenarios of significant political upheaval.</p>
             </div>
         </section>
 
         <!-- Electoral Map Section -->
         <section class="step" data-step="electoral-map">
             <div class="step-content">
-                <h2>Electoral Map Results</h2>
+                <h2>"Electoral Map" with Prediction Market Expectations</h2>
                 <p>This looks familiar, doesn't it? You may think that this is just an electoral map, but it's actually a visualization of the prediction markets' expectations for the outcome of the election.</p>
-                <p>Keep an eye out for sudden changes in the map, particularly across the swings states of Pennsylvania, Michigan, and Wisconsin. Try to keep note of WHEN this happens and click the play button below.</p>
+                <p>Keep an eye out for sudden changes in the map, particularly across the swings states of Pennsylvania, Michigan, and Wisconsin.</p>
+                <p>Try to keep note of WHEN this happens and click the play button below.</p>
 
                 <div id="electoral-map-container">
                     <!-- Electoral map visualization will go here -->
@@ -65,10 +118,11 @@
 
         <!-- Key Events Section -->
 
-        <section class="step" data-step="debate-aftermath">
+        <section class="step" data-step="key-events">
             <div class="step-content">
               <h2>Key Events</h2>
-              <p>Did you notice that around early July, a bunch of the swing states turned red? Well, that's because there were a few key events that affected the race.</p>
+              <p>Did you notice that around early July, a bunch of the swing states turned red? Primarily the states of Pennsylvania, Michigan, and Wisconsin.</p>
+              <p>Well, that's because there were a few key events that affected the race.</p>
               <p>Let's take a look at how some of these events influenced both traditional polls and prediction markets.</p>
               <div id="debate-aftermath">
                     <!-- The DebateAftermathViz will inject content here -->

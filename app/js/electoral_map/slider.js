@@ -69,7 +69,6 @@ export default class Slider {
 		// Update caption text
 		sliderSection
 			.append("h3")
-			.text("Choose a date to see election odds for each state")
 			.style("margin-top", "0")
 			.style("margin-bottom", "25px")
 			.style("font-size", "20px")
