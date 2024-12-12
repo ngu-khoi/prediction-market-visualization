@@ -118,7 +118,30 @@ export default class PollsVisualization {
 					.ticks(10)
 					.tickFormat((d) => `${d}%`)
 			)
+
+		this.addAxisLabels();
 	}
+
+	addAxisLabels() {
+		// X-axis label
+		this.svg
+			.append("text")
+			.attr("class", "x-label")
+			.attr("text-anchor", "middle")
+			.attr("x", this.width / 2)
+			.attr("y", this.height + this.margin.bottom - 5)
+			.text("Date");
+	
+		// Y-axis label
+		this.svg
+			.append("text")
+			.attr("class", "y-label")
+			.attr("text-anchor", "middle")
+			.attr("transform", "rotate(-90)")
+			.attr("y", -this.margin.left + 20)
+			.attr("x", -this.height / 2)
+			.text("Polling Percentage (%)");
+	}	
 
 	createGridlines() {
 		// Add gridlines
