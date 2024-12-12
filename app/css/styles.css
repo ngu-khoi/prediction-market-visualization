@@ -1,4 +1,8 @@
 /* Base Styles */
+* {
+    font-family: 'Inter', sans-serif !important;
+}
+
 body {
   margin: 0;
   padding: 0;
