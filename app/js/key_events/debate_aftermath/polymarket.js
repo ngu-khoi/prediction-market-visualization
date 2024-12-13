@@ -198,6 +198,28 @@ export default class PolymarketVisualization {
 				.attr("y", 5)
 				.text(candidate.charAt(0).toUpperCase() + candidate.slice(1))
 		})
+
+		// Add title
+		this.svg
+			.append("text")
+			.attr("class", "chart-title")
+			.attr("text-anchor", "middle")
+			.attr("transform", `translate(${this.width / 2},${-20})`)
+			.style("font-size", "16px")
+			.style("font-weight", "bold")
+			.text("Polymarket Prediction Prices")
+
+		// In the createChart method, after creating axes
+		this.svg
+			.append("text")
+			.attr("class", "axis-title")
+			.attr("text-anchor", "middle")
+			.attr(
+				"transform",
+				`translate(${-40},${this.height / 2}) rotate(-90)`
+			)
+			.style("font-size", "14px")
+			.text("Price (¢)")
 	}
 
 	updateVisualization(step, shouldTransition = true) {
@@ -292,6 +314,14 @@ export default class PolymarketVisualization {
 				.transition(t)
 				.attr("d", line)
 		})
+
+		if (shouldTransition) {
+			// Update chart title position
+			this.svg
+				.select(".chart-title")
+				.transition(t)
+				.attr("transform", `translate(${this.width / 2},${-20})`)
+		}
 	}
 
 	// Clean up when done

@@ -195,6 +195,30 @@ export default class PollingVisualization {
 				.style("font-size", "12px")
 				.style("alignment-baseline", "middle")
 		})
+
+		// In the createPollsChart method, after creating axes
+		svg.append("text")
+			.attr("class", "axis-title")
+			.attr("text-anchor", "middle")
+			.attr("transform", `translate(${-40},${height / 2}) rotate(-90)`)
+			.style("font-size", "14px")
+			.text("Percentage Vote")
+
+		svg.append("text")
+			.attr("class", "axis-title")
+			.attr("text-anchor", "middle")
+			.attr("transform", `translate(${width / 2},${height + 50})`)
+			.style("font-size", "14px")
+			.text("Date")
+
+		// Add title
+		svg.append("text")
+			.attr("class", "chart-title")
+			.attr("text-anchor", "middle")
+			.attr("transform", `translate(${width / 2},${-20})`)
+			.style("font-size", "16px")
+			.style("font-weight", "bold")
+			.text("National Polling Average")
 	}
 
 	updateVisualization(step) {
@@ -209,6 +233,19 @@ export default class PollingVisualization {
 
 		// Update x scale range
 		this.xScale.range([0, newWidth])
+
+		// Update title position
+		this.svg
+			.select(".chart-title")
+			.attr("transform", `translate(${newWidth / 2},${-20})`)
+
+		// Update axis title position
+		this.svg
+			.select(".axis-title")
+			.filter(function () {
+				return d3.select(this).text() === "Date"
+			})
+			.attr("transform", `translate(${newWidth / 2},${this.height + 50})`)
 
 		// Update legend position
 		this.svg
