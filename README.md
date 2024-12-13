@@ -7,7 +7,7 @@ CS1710 Final Project @ Harvard University
 ## Key Visualizations
 
 ### Electoral Map & Prediction Market Dashboard
-Interactive visualization showing the final electoral college results alongside real-time prediction market prices from Polymarket and Kalshi. Users can explore state-by-state results and see how market prices evolved over time. Show any cool moments where the market was right or wrong.
+Interactive visualization showing the final electoral college results alongside real-time prediction market prices from Polymarket and Kalshi. Users can explore state-by-state results and see how market prices evolved over time. Show any cool or insightful moments where the market was right or wrong.
 
 Features:
 - Slider to choose date (starting from available dataset)
