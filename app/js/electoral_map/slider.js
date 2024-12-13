@@ -84,17 +84,17 @@ export default class Slider {
 		this.playButton = controlsContainer
 			.append("button")
 			.attr("class", "play-button")
-			.html('<i class="fas fa-play"></i>')
+			.html("▶")
 			.on("click", function () {
 				if (vis.isPlaying) {
 					// Pause
 					vis.isPlaying = false
 					clearInterval(vis.playInterval)
-					d3.select(this).html('<i class="fas fa-play"></i>')
+					vis.playButton.html("▶")
 				} else {
 					// Play
 					vis.isPlaying = true
-					d3.select(this).html('<i class="fas fa-pause"></i>')
+					vis.playButton.html("⏸")
 					vis.playInterval = setInterval(() => {
 						let currentValue = parseInt(
 							vis.slider.property("value")
