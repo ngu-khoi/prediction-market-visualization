@@ -4,6 +4,24 @@ An interactive analysis of polling data and prediction markets during the 2024 U
 By Matt Mansour, Brett Kim, Raunak Daga, and Khoi Nguyen  
 CS1710 Final Project @ Harvard University
 
+## How to Run
+1. Navigate to the app directory:
+   ```bash
+   cd app
+   ```
+
+2. Start a local server (any of these methods will work):
+   - Python: `python3 -m http.server`
+   - Node.js: `npx http-server`
+   - PHP: `php -S localhost:8000`
+
+3. Open your browser and navigate to:
+   - Python: `http://localhost:8000`
+   - Node.js: `http://localhost:8080`
+   - PHP: `http://localhost:8000`
+
+Note: The app directory must be the root folder for the website to function properly.
+
 ## Key Visualizations
 
 ### Electoral Map & Prediction Market Dashboard
@@ -20,6 +38,9 @@ An innovative scrollytelling visualization that synchronizes narrative elements 
 - Synchronized scrolling triggers that reveal specific portions of the data visualization
 - Narrative elements that automatically highlight relevant data points
 - Focus on critical moments like the June presidential debate
+- Interactive elements that allow users to explore the relationship between events and market movements
+- Targeted highlighting of specific data points and trends during key campaign moments
+- Dynamic annotations that provide context and analysis at precise timestamps
 
 The visualization specifically demonstrates how these pivotal moments impacted both polling data and prediction markets, allowing for direct comparison of their responsiveness to major events.
 
